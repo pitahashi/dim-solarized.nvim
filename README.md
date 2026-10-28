@@ -163,3 +163,9 @@ The palette image is generated from `palette.lua`. Regenerate it after changing 
 ```sh
 nvim -l scripts/gen_palette.lua
 ```
+
+Run the tests (palette contrast, loading, options, lualine theme):
+
+```sh
+nvim -l tests/run.lua
+```
