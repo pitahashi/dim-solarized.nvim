@@ -5,7 +5,7 @@ local M = {}
 ---@param opts DimSolarizedOptions User options
 ---@return table<string, vim.api.keyset.highlight>
 function M.build(c, opts)
-	-- When transparent, drop only the Normal-family backgrounds and leave other groups as they are
+	-- When transparent, remove only the Normal-family backgrounds and leave the other groups alone
 	local bg = opts.transparent and "NONE" or c.bg
 	local bg_float = opts.transparent and "NONE" or c.bg_float
 
@@ -101,7 +101,7 @@ function M.build(c, opts)
 		Error = { fg = c.red },
 		Todo = { fg = c.magenta, bold = true },
 
-		-- Treesitter
+		-- Tree-sitter
 		-- Variables stay blue; parameters are italic and built-ins (self, this) are magenta so they stand out at a glance
 		["@variable"] = { fg = c.blue },
 		["@variable.builtin"] = { fg = c.magenta },
@@ -149,7 +149,7 @@ function M.build(c, opts)
 		["@tag"] = { fg = c.blue },
 		["@tag.attribute"] = { fg = c.yellow },
 		["@tag.delimiter"] = { fg = c.fg_dim },
-		-- Markdown headings get a different accent per level so the document outline is visible
+		-- Each Markdown heading level gets its own accent, which makes the document outline easy to see
 		["@markup.heading"] = { fg = c.orange, bold = true },
 		["@markup.heading.1"] = { fg = c.orange, bold = true },
 		["@markup.heading.2"] = { fg = c.yellow, bold = true },
@@ -169,8 +169,8 @@ function M.build(c, opts)
 		["@markup.raw.block"] = { link = "@markup.raw" },
 		["@markup.list"] = { fg = c.red },
 
-		-- LSP semantic tokens: map each token type onto the Treesitter group of the same role,
-		-- so highlighting looks the same whether a buffer is colored by Treesitter or by the language server
+		-- LSP semantic tokens: map each token type to the Tree-sitter group with the same role,
+		-- so a buffer looks the same whether Tree-sitter or the language server colors it
 		["@lsp.type.class"] = { link = "@type" },
 		["@lsp.type.struct"] = { link = "@type" },
 		["@lsp.type.interface"] = { link = "@type" },
@@ -197,7 +197,7 @@ function M.build(c, opts)
 		["@lsp.type.regexp"] = { link = "@string.regexp" },
 		["@lsp.type.comment"] = { link = "@comment" },
 		["@lsp.type.lifetime"] = { fg = c.orange, italic = true },
-		-- Modifiers are more specific than the token type, so they override it for matching tokens
+		-- Modifiers are more specific than the token type, so they take precedence for tokens that have them
 		["@lsp.typemod.variable.readonly"] = { link = "@constant" },
 		["@lsp.typemod.property.readonly"] = { link = "@constant" },
 		["@lsp.typemod.variable.defaultLibrary"] = { link = "@variable.builtin" },
@@ -287,7 +287,7 @@ function M.build(c, opts)
 		MiniStatuslineModeCommand = { fg = c.bg, bg = c.yellow, bold = true },
 	}
 
-	-- Merge user overrides last (replaced per group); ignore on_highlights unless it is a function
+	-- Apply user overrides last, replacing whole groups; skip on_highlights unless it is a function
 	if type(opts.on_highlights) == "function" then
 		for name, def in pairs(opts.on_highlights(c, groups) or {}) do
 			groups[name] = def

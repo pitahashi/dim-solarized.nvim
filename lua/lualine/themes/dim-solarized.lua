@@ -1,6 +1,6 @@
 local c = require("dim-solarized").colors()
 
---- Build one mode section set. `a` is the mode label, `b`/`c` are the inner sections.
+--- Build the sections for one mode: `a` is the mode label; `b` and `c` are the inner sections.
 ---@param accent string Background color of the mode label
 ---@return table
 local function mode(accent)
@@ -11,7 +11,7 @@ local function mode(accent)
 	}
 end
 
--- Colors follow the MiniStatuslineMode* groups so the mode colors match across statusline plugins
+-- Colors follow the MiniStatuslineMode* groups, so mode colors are consistent across statusline plugins
 return {
 	normal = mode(c.blue),
 	insert = mode(c.green),

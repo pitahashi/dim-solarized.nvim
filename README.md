@@ -1,19 +1,19 @@
 # dim-solarized.nvim
 
-A Neovim colorscheme that keeps Solarized's hues but lowers lightness and chroma to be easier on the eyes. Dark theme only.
+A Neovim colorscheme that keeps Solarized's hues but uses lower lightness and chroma, so it's easier on the eyes. Dark only.
 
 ![dim-solarized palette](docs/palette.svg)
 
 ## :sparkles: Features
 
-- Uses the same hue angles as the original Solarized, with uniform lightness and chroma across the 8 accents (about 6.1:1 contrast against the background for every accent)
-- Body text and comments are brighter than the original for readability (comment-to-background contrast goes from 2.8:1 in the original to about 5.2:1)
+- Same hues as Solarized, with a single lightness and chroma shared by all 8 accents (each has about 6.1:1 contrast against the background)
+- Body text and comments are lighter than in the original for readability (comment contrast goes from 2.8:1 to about 5.2:1)
 - The palette is computed from CIE LCh (`lua/dim-solarized/palette.lua`)
-- Covers Tree-sitter, LSP, diagnostics, diff, and the 16 `:terminal` colors
+- Covers Tree-sitter, LSP semantic tokens, diagnostics, diff, and the 16 `:terminal` colors
 
 ## :clipboard: Requirements
 
-- Neovim 0.12.5 or later (verified on 0.12.5; older versions are not guaranteed to work)
+- Neovim 0.12.5 or later (tested on 0.12.5; older versions may not work)
 - A terminal with 24-bit color support (`vim.o.termguicolors = true`)
 
 ## :package: Installation
@@ -29,7 +29,7 @@ Install with [lazy.nvim](https://github.com/folke/lazy.nvim):
 }
 ```
 
-`lazy = false` and `priority = 1000` make the colorscheme load before other plugins.
+`lazy = false` and `priority = 1000` ensure the colorscheme loads before your other plugins.
 
 ## :rocket: Usage
 
@@ -43,19 +43,19 @@ colorscheme dim-solarized
 
 `setup()` is optional. Without it, the defaults are used.
 
-Full documentation is also available in Neovim with `:help dim-solarized`.
+You can also read the full docs inside Neovim with `:help dim-solarized`.
 
 ## :wrench: Configuration
 
-> Set the configuration **BEFORE** loading the colorscheme. If you call `setup()` afterwards, the options do not take effect until you run `colorscheme dim-solarized` again.
+> Configure the colorscheme **BEFORE** loading it. If you call `setup()` afterwards, the options won't take effect until you run `colorscheme dim-solarized` again.
 
-With lazy.nvim, `opts` is passed to `setup()` for you. Otherwise call it yourself:
+lazy.nvim passes `opts` to `setup()` for you. Otherwise, call it yourself:
 
 ```lua
 require("dim-solarized").setup({
-	transparent = false, -- make the backgrounds of Normal, NormalFloat, etc. transparent
-	italic_comments = true, -- italicize comments
-	on_colors = function(c) end, -- modify the palette in place (see below)
+	transparent = false, -- transparent backgrounds for Normal, NormalFloat, etc.
+	italic_comments = true, -- italic comments
+	on_colors = function(c) end, -- edit the palette in place (see below)
 	on_highlights = function(c, groups) -- add or override highlight groups (see below)
 		return {}
 	end,
@@ -71,7 +71,7 @@ require("dim-solarized").setup({
 
 ## :art: Overriding Colors & Highlight Groups
 
-`on_colors` receives the palette `c` and modifies it in place. The changes are reflected in the highlight groups, the `:terminal` colors, and the bundled statusline theme.
+`on_colors` gets the palette `c` and edits it in place. The changes carry over to the highlight groups, the `:terminal` colors, and the bundled statusline theme.
 
 ```lua
 require("dim-solarized").setup({
@@ -81,7 +81,7 @@ require("dim-solarized").setup({
 })
 ```
 
-`on_highlights` receives the palette `c` (after `on_colors`) and the built-in definitions `groups`, and returns a table of `group name = nvim_set_hl definition`.
+`on_highlights` gets the palette `c` (after `on_colors`) and the built-in definitions `groups`. It returns a table of `group name = nvim_set_hl definition`.
 
 ```lua
 require("dim-solarized").setup({
@@ -96,10 +96,10 @@ require("dim-solarized").setup({
 
 Notes:
 
-- Returned groups replace the existing definition as a whole; they are not merged per attribute. Even if you only want to change `fg`, you must rewrite any `bg` or `bold` you want to keep.
-- The returned values are applied last, so they take precedence over `transparent`.
+- A returned group replaces the built-in definition entirely; attributes are not merged. If you only want to change `fg`, repeat any `bg` or `bold` you want to keep.
+- Returned values are applied last, so they win over `transparent`.
 
-The main keys available in `c` are:
+These are the main keys in `c`:
 
 | Key | Purpose |
 | --- | --- |
@@ -107,19 +107,19 @@ The main keys available in `c` are:
 | `fg`, `fg_dim`, `fg_bright` | Normal, secondary, and emphasized foreground |
 | `comment`, `border` | Comments, borders |
 | `yellow`, `orange`, `red`, `magenta`, `violet`, `blue`, `cyan`, `green` | The 8 accents |
-| `diff_add`, `diff_change`, `diff_delete`, `diff_text` | diff backgrounds |
+| `diff_add`, `diff_change`, `diff_delete`, `diff_text` | Diff backgrounds |
 
 The colors are defined in `lua/dim-solarized/palette.lua`.
 
 ## :mag: Troubleshooting
 
-- Colors are not applied: check that `setup()` is called before `colorscheme` and that `termguicolors` is enabled.
-- Colors from another colorscheme remain: check that `lazy = false` and `priority = 1000` are set in lazy.nvim.
-- Running `:colorscheme` pins `background` to `dark`. A light theme is not supported.
+- Colors aren't applied: make sure `setup()` runs before `colorscheme` and that `termguicolors` is on.
+- Colors from another colorscheme show through: make sure `lazy = false` and `priority = 1000` are set in lazy.nvim.
+- `:colorscheme` always sets `background` to `dark`. There is no light variant.
 
 ## :robot: AI Disclosure
 
-This project was created with the assistance of AI (Claude, by Anthropic). The code, documentation, and palette were generated by AI and may contain errors or unintended behavior. Review the code before relying on it, and please report problems through issues.
+This project was built with the help of AI (Claude, by Anthropic). The code, documentation, and palette were AI-generated and may contain bugs or unexpected behavior. Please review the code before relying on it, and report any problems by opening an issue.
 
 ## :page_facing_up: License
 
@@ -127,17 +127,17 @@ This project was created with the assistance of AI (Claude, by Anthropic). The c
 
 ## :pray: Acknowledgements
 
-Based on the color design of [Solarized](https://ethanschoonover.com/solarized/) by Ethan Schoonover (MIT License). This project is an independent work and is not affiliated with the original. The Solarized license notice is included in [LICENSE](LICENSE).
+The color design is based on [Solarized](https://ethanschoonover.com/solarized/) by Ethan Schoonover (MIT License). This is an independent project and is not affiliated with the original. Solarized's license notice is included in [LICENSE](LICENSE).
 
 ## :hammer: Development
 
-The palette image is generated from `palette.lua`. Regenerate it after changing the palette.
+The palette image is generated from `palette.lua`. Regenerate it whenever you change the palette.
 
 ```sh
 nvim -l scripts/gen_palette.lua
 ```
 
-Run the tests (palette contrast, loading, options):
+Run the tests (contrast checks, loading, options, help file):
 
 ```sh
 nvim -l tests/run.lua

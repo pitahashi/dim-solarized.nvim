@@ -17,16 +17,16 @@ CONTENTS                                              *dim-solarized-contents*
 ==============================================================================
 1. INTRODUCTION                                   *dim-solarized-introduction*
 
-dim-solarized.nvim keeps the hue angles of Solarized but lowers lightness and
-chroma so the colors are easier on the eyes. Only a dark theme is provided.
+dim-solarized.nvim keeps Solarized's hues but uses lower lightness and
+chroma, so the colors are easier on the eyes. It is dark only.
 
-  - The 8 accents share one lightness and chroma (about 6.1:1 contrast
+  - All 8 accents share the same lightness and chroma (about 6.1:1 contrast
     against the background).
   - Body text and comments are brighter than in the original (comments reach
     about 5.2:1 against the background).
   - The palette is computed from CIE LCh in `lua/dim-solarized/palette.lua`.
-  - Tree-sitter groups, LSP semantic tokens, diagnostics, diff and the 16
-    |terminal| colors are covered.
+  - Covers Tree-sitter groups, LSP semantic tokens, diagnostics, diff, and
+    the 16 |terminal| colors.
 
 ==============================================================================
 2. REQUIREMENTS                                   *dim-solarized-requirements*
@@ -45,8 +45,8 @@ With lazy.nvim: >lua
         opts = {},
     }
 <
-`lazy = false` and `priority = 1000` make the colorscheme load before other
-plugins. lazy.nvim passes `opts` to |dim-solarized.setup()|.
+`lazy = false` and `priority = 1000` ensure the colorscheme loads before your
+other plugins. lazy.nvim passes `opts` to |dim-solarized.setup()|.
 
 ==============================================================================
 4. USAGE                                                 *dim-solarized-usage*
@@ -56,16 +56,15 @@ plugins. lazy.nvim passes `opts` to |dim-solarized.setup()|.
 >vim
     colorscheme dim-solarized
 <
-|dim-solarized.setup()| is optional. Without it the defaults are used.
-Running |:colorscheme| pins 'background' to `dark`; a light theme is not
-supported.
+|dim-solarized.setup()| is optional. Without it, the defaults are used.
+|:colorscheme| always sets 'background' to `dark`; there is no light variant.
 
 ==============================================================================
 5. CONFIGURATION                                 *dim-solarized-configuration*
 
-Set the options BEFORE loading the colorscheme. If |dim-solarized.setup()| is
-called afterwards, the options take effect the next time you run
-`:colorscheme dim-solarized`. >lua
+Configure the colorscheme BEFORE loading it. If |dim-solarized.setup()| is
+called afterwards, the options won't take effect until you run
+`:colorscheme dim-solarized` again. >lua
 
     require("dim-solarized").setup({
         transparent = false,
@@ -92,15 +91,14 @@ on_highlights      fun(c, groups): table (default: returns `{}`)
                    Add or override highlight groups. See
                    |dim-solarized-overrides|.
 
-Values that are not functions are ignored for `on_colors` and
-`on_highlights`.
+`on_colors` and `on_highlights` are ignored if they aren't functions.
 
 ==============================================================================
 6. OVERRIDING COLORS AND HIGHLIGHTS                  *dim-solarized-overrides*
 
-`on_colors` receives the palette `c` and changes it in place. The result is
-used for the highlight groups, the |terminal| colors and the bundled lualine
-theme. >lua
+`on_colors` gets the palette `c` and edits it in place. The result is used by
+the highlight groups, the |terminal| colors, and the bundled lualine theme.
+>lua
 
     require("dim-solarized").setup({
         on_colors = function(c)
@@ -108,8 +106,8 @@ theme. >lua
         end,
     })
 <
-`on_highlights` receives the palette `c` (after `on_colors`) and `groups`, the
-built-in definitions, and returns a table of `group name = nvim_set_hl
+`on_highlights` gets the palette `c` (after `on_colors`) and `groups`, the
+built-in definitions. It returns a table of `group name = nvim_set_hl
 definition`. >lua
 
     require("dim-solarized").setup({
@@ -123,15 +121,14 @@ definition`. >lua
 <
 Notes:
 
-  - A returned group replaces the existing definition as a whole; attributes
-    are not merged. To change only `fg`, rewrite any `bg` or `bold` you want
+  - A returned group replaces the built-in definition entirely; attributes
+    are not merged. To change only `fg`, repeat any `bg` or `bold` you want
     to keep. The built-in definition is available as `groups.<name>`.
-  - The returned values are applied last, so they take precedence over
-    `transparent`.
-  - The palette passed to the callbacks is a copy. Changing it does not
-    affect other callers.
+  - Returned values are applied last, so they win over `transparent`.
+  - The palette passed to the callbacks is a copy. Changing it doesn't
+    affect anything else.
 
-Groups for plugins that this colorscheme does not define can be added with
+To style a plugin this colorscheme doesn't cover, add its groups with
 `on_highlights`.
 
 ==============================================================================
@@ -172,11 +169,11 @@ require("dim-solarized").load()
 ==============================================================================
 9. TROUBLESHOOTING                             *dim-solarized-troubleshooting*
 
-  - Colors are not applied: check that |dim-solarized.setup()| is called
-    before `:colorscheme` and that 'termguicolors' is enabled.
-  - Colors from another colorscheme remain: with lazy.nvim, check that
+  - Colors aren't applied: make sure |dim-solarized.setup()| runs before
+    `:colorscheme` and that 'termguicolors' is on.
+  - Colors from another colorscheme show through: with lazy.nvim, make sure
     `lazy = false` and `priority = 1000` are set.
-  - Options changed after loading have no effect: run
+  - Options changed after loading have no effect until you run
     `:colorscheme dim-solarized` again.
 
 ==============================================================================
@@ -186,10 +183,10 @@ MIT License. See the LICENSE file in the repository.
 
 The color design is based on Solarized
 (https://ethanschoonover.com/solarized/) by Ethan Schoonover (MIT License).
-This project is an independent work and is not affiliated with the original.
-The Solarized license notice is included in the LICENSE file.
+This is an independent project and is not affiliated with the original.
+Solarized's license notice is included in the LICENSE file.
 
-This project was created with the assistance of AI (Claude, by Anthropic). The
-code and documentation may contain errors or unintended behavior.
+This project was built with the help of AI (Claude, by Anthropic). The code
+and documentation may contain bugs or unexpected behavior.
 
  vim:tw=78:ts=8:ft=help:norl:

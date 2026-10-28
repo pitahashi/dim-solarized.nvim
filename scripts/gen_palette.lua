@@ -1,11 +1,11 @@
 -- Generate docs/palette.svg, the palette image for the README.
--- Lay the palette out on a mock Neovim window (tabline, code with line numbers, floats, statusline, command line).
+-- Draw the palette on a mock Neovim window (tabline, code with line numbers, floats, statusline, command line).
 -- The left side shows the palette itself as Lua code; the floats on the right show accents, foregrounds, and diff colors.
 -- Usage: run `nvim -l scripts/gen_palette.lua` from the plugin root
 vim.opt.rtp:prepend(vim.fn.getcwd())
 local c = require("dim-solarized.palette").get()
 
--- Groups to display (headings and color names in order)
+-- Groups to show, with their headings and color names in display order
 local groups = {
 	{ "Background", { "bg", "bg_alt", "bg_sel", "bg_float", "border" } },
 	{ "Foreground", { "fg", "fg_dim", "fg_bright", "comment" } },
@@ -23,14 +23,14 @@ local FONT = "JetBrains Mono, SF Mono, Menlo, Consolas, monospace"
 
 local out = {}
 
---- Escape text that cannot appear in an SVG string.
+--- Escape characters that are not allowed in SVG text.
 ---@param s string
 ---@return string
 local function esc(s)
 	return (s:gsub("&", "&amp;"):gsub("<", "&lt;"):gsub(">", "&gt;"))
 end
 
---- Return whether a background color is dark. Dark colors cannot be used as text colors, so this guides foreground color choice.
+--- Return whether a color is dark. Dark colors would be hard to read as text, so this decides which colors are drawn in their own color.
 ---@param hex string #rrggbb
 ---@return boolean
 local function is_dark(hex)
@@ -50,7 +50,7 @@ local function rect(x, y, w, h, fill, extra)
 	out[#out + 1] = string.format('<rect x="%g" y="%g" width="%g" height="%g" fill="%s" %s/>', x, y, w, h, fill, extra or "")
 end
 
---- Emit one <text>. body may be a tspan sequence built by the caller.
+--- Emit one <text> element. `body` can be a sequence of tspans built by the caller.
 ---@param x number
 ---@param y number
 ---@param fill string
@@ -72,7 +72,7 @@ local function span(s, fill, extra)
 	return string.format('<tspan fill="%s" %s>%s</tspan>', fill, extra or "", esc(s))
 end
 
---- Draw a floating window whose border carries a title.
+--- Draw a floating window with a title in its border.
 ---@param x number
 ---@param y number
 ---@param w number
@@ -80,13 +80,13 @@ end
 ---@param title string
 local function float(x, y, w, h, title)
 	rect(x, y, w, h, c.bg_float, string.format('rx="8" stroke="%s" stroke-width="1.5"', c.border))
-	-- Cut the border out with the background color for the width of the title, then place the title on top
+	-- Paint over the border with the background color for the width of the title, then draw the title on top
 	local tw = #title * CW + 16
 	rect(x + 14, y - 2, tw, 4, c.bg_float)
 	text(x + 22, y + 4, c.fg_bright, esc(title), 'font-weight="bold"')
 end
 
--- Build the code lines first so the overall height can be decided
+-- Build the code lines first so the total height is known
 ---@class GenRow
 ---@field kind "plain"|"comment"|"entry"
 ---@field body string tspan sequence
@@ -103,7 +103,7 @@ for _, group in ipairs(groups) do
 	rows[#rows + 1] = { kind = "comment", body = span("  -- " .. group[1], c.comment, 'font-style="italic"') }
 	for _, name in ipairs(group[2]) do
 		local hex = c[name]
-		-- Dark colors would sink into the background as text, so write them in the body color; write bright colors in their own color
+		-- Dark colors would disappear into the background as text, so write them in the body color; write bright colors in their own color
 		local value_fill = is_dark(hex) and c.fg or hex
 		rows[#rows + 1] = {
 			kind = "entry",
@@ -152,14 +152,14 @@ for i, row in ipairs(rows) do
 	local y = TAB_H + 12 + (i - 1) * LH
 	local is_cursor = row.name == CURSOR_NAME
 	if is_cursor then
-		-- Mark the cursor line with a sign on the left edge and a band
+		-- Mark the cursor line with a sign on the left edge and a highlight band
 		rect(0, y, SPLIT_X - 20, LH, c.bg_alt)
 		rect(0, y, 3, LH, c.blue)
 	end
 	text(40, y + 15, is_cursor and c.fg_bright or c.comment, tostring(i), 'text-anchor="end"')
 	text(64, y + 15, c.fg, row.body)
 	if row.hex then
-		-- Place the swatch at the end of the line like virtual text. Add a thin outline so colors close to the background stay visible
+		-- Put the swatch at the end of the line, like virtual text, with a thin outline so colors close to the background stay visible
 		rect(296, y + 4, 40, LH - 8, row.hex, string.format('rx="3" stroke="%s"', c.border))
 	end
 end
@@ -190,7 +190,7 @@ for i, name in ipairs(fgs) do
 	text(fx + fw - 20, y + 15, c.fg_dim, esc(c[name]), 'text-anchor="end"')
 end
 
--- Right float 3: diff. Show full-line backgrounds and the highlight for changed parts (diff_text)
+-- Right float 3: diff. Show full-line backgrounds and the highlight for changed text (diff_text)
 local dy = py + #fgs * LH + 32 + 24
 float(fx, dy, fw, 4 * LH + 32, "Diff")
 local diff_rows = {
@@ -203,7 +203,7 @@ for i, d in ipairs(diff_rows) do
 	rect(fx + 8, y, fw - 16, LH, d.bg)
 	local line = d.mark .. " " .. d.pre
 	text(fx + 20, y + 15, c.fg, esc(line))
-	-- For the emphasized value, compute the x coordinate from the length of the preceding text and overlay the background
+	-- For the highlighted value, work out its x coordinate from the length of the text before it and draw the background over it
 	local vx = fx + 20 + #line * CW
 	if d.hl then
 		rect(vx - 2, y + 2, #d.hl * CW + 4, LH - 4, c.diff_text, 'rx="3"')
@@ -228,7 +228,7 @@ text(W - 16, status_y + 17, c.fg_dim, string.format("lua  utf-8  ln %d/%d", curs
 text(16, status_y + STATUS_H + 16, c.fg, span(":", c.yellow) .. span("colorscheme ", c.fg) .. span("dim-solarized", c.cyan))
 
 out[#out + 1] = "</g>"
--- Overlay the outer frame outside the clip to draw a line that follows the rounded corners
+-- Draw the outer frame on top, outside the clip, so the line follows the rounded corners
 out[#out + 1] = string.format(
 	'<rect x="0.5" y="0.5" width="%d" height="%d" rx="12" fill="none" stroke="%s"/>',
 	W - 1, H - 1, c.border

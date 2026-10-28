@@ -6,8 +6,8 @@ local M = {}
 ---@class DimSolarizedOptions
 ---@field transparent boolean Make the background of Normal-family groups transparent
 ---@field italic_comments boolean Italicize comments
----@field on_colors fun(c: DimSolarizedPalette)? Function that modifies the palette in place before highlights are built
----@field on_highlights fun(c: DimSolarizedPalette, groups: table<string, vim.api.keyset.highlight>): table<string, vim.api.keyset.highlight>? Function returning highlights to add or override; `groups` holds the built-in definitions
+---@field on_colors fun(c: DimSolarizedPalette)? Modifies the palette in place before highlights are built
+---@field on_highlights fun(c: DimSolarizedPalette, groups: table<string, vim.api.keyset.highlight>): table<string, vim.api.keyset.highlight>? Returns highlights to add or override; `groups` contains the built-in definitions
 
 ---@type DimSolarizedOptions
 M.options = {
@@ -19,7 +19,7 @@ M.options = {
 	end,
 }
 
---- Apply user options. Call before running `colorscheme`.
+--- Apply user options. Call this before `:colorscheme`.
 --- Example: `require("dim-solarized").setup({ transparent = true })`
 ---@param opts? DimSolarizedOptions|table Options to override
 function M.setup(opts)
@@ -30,7 +30,7 @@ end
 ---@return DimSolarizedPalette
 function M.colors()
 	local c = palette.get()
-	-- Ignore on_colors unless it is a function so a bad option cannot break loading
+	-- Skip on_colors unless it is a function, so a bad value can't break loading
 	if type(M.options.on_colors) == "function" then
 		M.options.on_colors(c)
 	end
@@ -39,14 +39,14 @@ end
 
 --- Apply the colorscheme.
 function M.load()
-	-- Reset existing highlights and syntax to clear leftovers from the previous theme
+	-- Clear existing highlights and syntax so nothing is left over from the previous colorscheme
 	vim.cmd("highlight clear")
 	if vim.fn.exists("syntax_on") == 1 then
 		vim.cmd("syntax reset")
 	end
 
-	-- Changing 'background' reloads the colorscheme when g:colors_name is set,
-	-- so clear colors_name first to prevent re-entry
+	-- Setting 'background' re-sources the colorscheme when g:colors_name is set,
+	-- so clear colors_name first to avoid recursion
 	vim.g.colors_name = nil
 	vim.o.background = "dark"
 
@@ -56,8 +56,8 @@ function M.load()
 	end
 
 	-- 16 colors for :terminal, ordered as ANSI (black, red, green, yellow, blue, magenta, cyan, white, then each bright).
-	-- The bright variants reuse the accents so that bright red/green/yellow/blue/magenta/cyan stay recognizable;
-	-- bright black is the dim foreground so that "dim" output stays readable on the background
+	-- The bright variants reuse the accents so bright red/green/yellow/blue/magenta/cyan stay recognizable;
+	-- bright black is the dim foreground so "dim" output stays readable on the background
 	local ansi = {
 		c.bg_alt, c.red, c.green, c.yellow, c.blue, c.magenta, c.cyan, c.fg,
 		c.fg_dim, c.red, c.green, c.yellow, c.blue, c.magenta, c.cyan, c.fg_bright,

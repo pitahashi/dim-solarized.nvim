@@ -100,7 +100,7 @@ test("every accent has about 6.1:1 contrast against bg", function()
 end)
 
 test("accents keep the original Solarized hue order", function()
-	-- Hue angle of a color in CIE LCh is not exposed, so compare the dominant channel instead
+	-- The LCh hue angle isn't exposed, so compare the dominant RGB channel instead
 	local function channels(hex)
 		return tonumber(hex:sub(2, 3), 16), tonumber(hex:sub(4, 5), 16), tonumber(hex:sub(6, 7), 16)
 	end
@@ -141,7 +141,7 @@ test("every highlight group with fg and bg is readable", function()
 	reset()
 	local failed = {}
 	for name, def in pairs(highlights.build(palette, plugin.options)) do
-		-- Only definitions that state both colors can be checked in isolation
+		-- Only definitions that set both colors can be checked on their own
 		if not HIDDEN[name] and def.fg and def.bg and def.fg:sub(1, 1) == "#" and def.bg:sub(1, 1) == "#" then
 			local min = DECORATIVE[name] and DECORATIVE_MIN or TEXT_MIN
 			local ratio = contrast(def.fg, def.bg)
@@ -360,7 +360,7 @@ test("no group falls back to a color outside the palette", function()
 	end
 	local leaks = {}
 	for name in pairs(vim.api.nvim_get_hl(0, {})) do
-		-- Debug-only groups from Neovim's own tooling are not part of the theme
+		-- Skip Neovim's internal debug groups; they aren't part of the theme
 		if not name:match("^Nvim") and not name:match("^RedrawDebug") then
 			local def = vim.api.nvim_get_hl(0, { name = name, link = false })
 			for _, key in ipairs({ "fg", "bg", "sp" }) do
@@ -384,7 +384,7 @@ test("every standard LSP semantic token type is mapped", function()
 	}
 	for _, name in ipairs(types) do
 		local def = vim.api.nvim_get_hl(0, { name = "@lsp.type." .. name, link = false })
-		-- "variable" has no entry on purpose: it falls through to the Treesitter color
+		-- "variable" is intentionally left out: it falls back to the Tree-sitter color
 		assert(name == "variable" or def.fg, "@lsp.type." .. name .. " has no color")
 	end
 end)
@@ -422,7 +422,7 @@ test("defaultLibrary and readonly modifiers resolve to their role", function()
 	assert(fg("@lsp.typemod.variable.readonly") == fg("@constant"))
 end)
 
-test("every Treesitter and LSP group is readable once links are resolved", function()
+test("every Tree-sitter and LSP group is readable once links are resolved", function()
 	reset()
 	vim.cmd("colorscheme dim-solarized")
 	local failed = {}
@@ -442,7 +442,7 @@ test("every Treesitter and LSP group is readable once links are resolved", funct
 end)
 
 test("help file generates tags and every reference resolves", function()
-	-- Work on a copy so the repository does not get a generated doc/tags file
+	-- Work on a copy so the repository doesn't end up with a generated doc/tags file
 	local tmp = vim.fn.tempname()
 	vim.fn.mkdir(tmp .. "/doc", "p")
 	vim.fn.writefile(vim.fn.readfile(root .. "/doc/dim-solarized.txt"), tmp .. "/doc/dim-solarized.txt")
@@ -458,7 +458,7 @@ test("help file generates tags and every reference resolves", function()
 		defined[tag] = true
 	end
 	for ref in text:gmatch("|([^|%s]+)|") do
-		-- Options, commands and built-in help tags are not defined in this file
+		-- Options, commands, and built-in help tags aren't defined in this file
 		if not ref:match("^[':]") and ref ~= "terminal" then
 			assert(defined[ref], "undefined help reference: " .. ref)
 		end
