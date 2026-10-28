@@ -13,6 +13,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Dark colorscheme that keeps Solarized's hue angles with lower lightness and chroma
 - Palette computed from CIE LCh (`lua/dim-solarized/palette.lua`)
 - Highlight groups for Tree-sitter, LSP, diagnostics, diff, and the 16 `:terminal` colors
+- Tree-sitter groups with distinct looks for parameters (italic), built-in variables, built-in types, attributes, modules, string escapes and regexps, and per-level Markdown headings
+- LSP semantic token types and `defaultLibrary`/`readonly`/`deprecated` modifiers mapped onto the matching Tree-sitter groups
 - Options `transparent`, `italic_comments`, `on_colors`, and `on_highlights` (which also receives the built-in groups)
 - `scripts/gen_palette.lua` to regenerate `docs/palette.svg`
 - Selection and diff backgrounds tuned so body text and accents keep at least 4.5:1 contrast on them; comments and secondary text reach about 5.2:1 against the background

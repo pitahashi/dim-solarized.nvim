@@ -374,6 +374,73 @@ test("no group falls back to a color outside the palette", function()
 	assert(#leaks == 0, table.concat(leaks, ", "))
 end)
 
+test("every standard LSP semantic token type is mapped", function()
+	reset()
+	vim.cmd("colorscheme dim-solarized")
+	local types = {
+		"namespace", "type", "class", "enum", "interface", "struct", "typeParameter", "parameter",
+		"variable", "property", "enumMember", "event", "function", "method", "macro", "keyword",
+		"modifier", "comment", "string", "number", "regexp", "operator", "decorator",
+	}
+	for _, name in ipairs(types) do
+		local def = vim.api.nvim_get_hl(0, { name = "@lsp.type." .. name, link = false })
+		-- "variable" has no entry on purpose: it falls through to the Treesitter color
+		assert(name == "variable" or def.fg, "@lsp.type." .. name .. " has no color")
+	end
+end)
+
+test("semantic token roles have distinct looks", function()
+	reset()
+	vim.cmd("colorscheme dim-solarized")
+	local function resolved(name)
+		return vim.inspect(vim.api.nvim_get_hl(0, { name = name, link = false }))
+	end
+	local roles = {
+		"@variable", "@variable.builtin", "@variable.parameter", "@type", "@type.builtin",
+		"@function", "@function.macro", "@constant", "@string", "@keyword", "@attribute",
+	}
+	local seen = {}
+	for _, role in ipairs(roles) do
+		local key = resolved(role)
+		-- Constants share the string color and functions share the variable color on purpose (as in Solarized), so both are skipped
+		if role ~= "@constant" and role ~= "@function" then
+			assert(not seen[key], role .. " looks the same as " .. tostring(seen[key]))
+			seen[key] = role
+		end
+	end
+end)
+
+test("defaultLibrary and readonly modifiers resolve to their role", function()
+	reset()
+	vim.cmd("colorscheme dim-solarized")
+	local function fg(name)
+		return vim.api.nvim_get_hl(0, { name = name, link = false }).fg
+	end
+	assert(fg("@lsp.typemod.variable.defaultLibrary") == fg("@variable.builtin"))
+	assert(fg("@lsp.typemod.function.defaultLibrary") == fg("@function.builtin"))
+	assert(fg("@lsp.typemod.class.defaultLibrary") == fg("@type.builtin"))
+	assert(fg("@lsp.typemod.variable.readonly") == fg("@constant"))
+end)
+
+test("every Treesitter and LSP group is readable once links are resolved", function()
+	reset()
+	vim.cmd("colorscheme dim-solarized")
+	local failed = {}
+	for name in pairs(highlights.build(palette, plugin.options)) do
+		if name:sub(1, 1) == "@" then
+			local def = vim.api.nvim_get_hl(0, { name = name, link = false })
+			if def.fg then
+				local ratio = contrast(string.format("#%06x", def.fg), palette.bg)
+				if ratio < TEXT_MIN - 0.05 then
+					table.insert(failed, string.format("%s %.2f", name, ratio))
+				end
+			end
+		end
+	end
+	table.sort(failed)
+	assert(#failed == 0, table.concat(failed, ", "))
+end)
+
 if failures > 0 then
 	print(failures .. " test(s) failed")
 	os.exit(1)
