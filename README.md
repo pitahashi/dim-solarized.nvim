@@ -32,7 +32,7 @@ Groups from other plugins are not defined. Add them with `on_highlights` if you 
 
 ## :clipboard: Requirements
 
-- Neovim (the tested version is unknown; Tree-sitter group names such as `@markup.*` follow the 0.10+ naming, so 0.10 or later is recommended)
+- Neovim 0.12.5 or later (verified on 0.12.5; older versions are not guaranteed to work)
 - A terminal with 24-bit color support (`vim.o.termguicolors = true`)
 
 ## :package: Installation
