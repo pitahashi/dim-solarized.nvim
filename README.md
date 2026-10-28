@@ -152,6 +152,10 @@ This project was created with the assistance of AI (Claude, by Anthropic). The c
 
 [MIT](LICENSE)
 
+## :pray: Acknowledgements
+
+Based on the color design of [Solarized](https://ethanschoonover.com/solarized/) by Ethan Schoonover (MIT License). This project is an independent work and is not affiliated with the original. The Solarized license notice is included in [LICENSE](LICENSE).
+
 ## :hammer: Development
 
 The palette image is generated from `palette.lua`. Regenerate it after changing the palette.
