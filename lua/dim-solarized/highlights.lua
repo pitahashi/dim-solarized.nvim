@@ -138,6 +138,13 @@ function M.build(c, opts)
 		DiagnosticInfo = { fg = c.blue },
 		DiagnosticHint = { fg = c.cyan },
 		DiagnosticOk = { fg = c.green },
+		DiagnosticDeprecated = { sp = c.red, strikethrough = true },
+		DiagnosticUnderlineOk = { sp = c.green, undercurl = true },
+		OkMsg = { fg = c.green },
+		FloatShadow = { bg = c.bg_alt, blend = 80 },
+		FloatShadowThrough = { bg = c.bg_alt, blend = 100 },
+		PmenuShadow = { bg = c.bg_alt, blend = 80 },
+		PmenuShadowThrough = { bg = c.bg_alt, blend = 100 },
 		DiagnosticUnderlineError = { sp = c.red, undercurl = true },
 		DiagnosticUnderlineWarn = { sp = c.yellow, undercurl = true },
 		DiagnosticUnderlineInfo = { sp = c.blue, undercurl = true },
@@ -205,7 +212,7 @@ function M.build(c, opts)
 
 	-- Merge user overrides last (replaced per group); ignore on_highlights unless it is a function
 	if type(opts.on_highlights) == "function" then
-		for name, def in pairs(opts.on_highlights(c) or {}) do
+		for name, def in pairs(opts.on_highlights(c, groups) or {}) do
 			groups[name] = def
 		end
 	end

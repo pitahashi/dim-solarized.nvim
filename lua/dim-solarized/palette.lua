@@ -129,10 +129,10 @@ M.palettes = {
 	},
 }
 
---- Return the palette. Only dark is available for now.
+--- Return a copy of the palette so callers can modify it without affecting other users. Only dark is available for now.
 ---@return DimSolarizedPalette
 function M.get()
-	return M.palettes.dark
+	return vim.deepcopy(M.palettes.dark)
 end
 
 return M

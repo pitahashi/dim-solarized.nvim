@@ -62,6 +62,7 @@ local function reset()
 	plugin.options = {
 		transparent = false,
 		italic_comments = true,
+		on_colors = function() end,
 		on_highlights = function()
 			return {}
 		end,
@@ -294,6 +295,83 @@ test("lualine theme exposes every mode with readable colors", function()
 			assert(ratio >= TEXT_MIN - 0.05, string.format("%s.%s: %.2f", mode, section, ratio))
 		end
 	end
+end)
+
+test("modifying a returned palette does not affect later callers", function()
+	local copy = require("dim-solarized.palette").get()
+	copy.red = "#000000"
+	assert(require("dim-solarized.palette").get().red == palette.red)
+end)
+
+test("on_colors changes the palette used by highlights, terminal colors and colors()", function()
+	reset()
+	plugin.setup({
+		on_colors = function(c)
+			c.red = "#ff0000"
+		end,
+	})
+	vim.cmd("colorscheme dim-solarized")
+	assert(plugin.colors().red == "#ff0000", "colors()")
+	assert(vim.g.terminal_color_1 == "#ff0000", "terminal_color_1")
+	assert(vim.api.nvim_get_hl(0, { name = "Substitute" }).bg == to_int("#ff0000"), "Substitute")
+	assert(require("dim-solarized.palette").get().red == palette.red, "base palette must stay untouched")
+	reset()
+end)
+
+test("invalid on_colors values do not break loading", function()
+	reset()
+	plugin.options.on_colors = "x"
+	vim.cmd("colorscheme dim-solarized")
+	assert(vim.g.colors_name == "dim-solarized")
+	reset()
+end)
+
+test("on_highlights receives the built-in groups", function()
+	reset()
+	local seen
+	plugin.setup({
+		on_highlights = function(_, groups)
+			seen = groups
+			return { Comment = { fg = groups.Comment.fg, italic = false } }
+		end,
+	})
+	vim.cmd("colorscheme dim-solarized")
+	assert(seen and seen.Normal, "groups table")
+	assert(not vim.api.nvim_get_hl(0, { name = "Comment" }).italic)
+	reset()
+end)
+
+test("bright terminal colors reuse the accents and bright black stays readable", function()
+	reset()
+	vim.cmd("colorscheme dim-solarized")
+	for i = 1, 6 do
+		assert(vim.g["terminal_color_" .. i] == vim.g["terminal_color_" .. (i + 8)], "bright " .. i)
+	end
+	assert(contrast(vim.g.terminal_color_8, palette.bg) >= TEXT_MIN, "bright black")
+	assert(contrast(vim.g.terminal_color_7, palette.bg) >= TEXT_MIN, "white")
+end)
+
+test("no group falls back to a color outside the palette", function()
+	reset()
+	vim.cmd("colorscheme dim-solarized")
+	local known = {}
+	for _, v in pairs(palette) do
+		known[to_int(v)] = true
+	end
+	local leaks = {}
+	for name in pairs(vim.api.nvim_get_hl(0, {})) do
+		-- Debug-only groups from Neovim's own tooling are not part of the theme
+		if not name:match("^Nvim") and not name:match("^RedrawDebug") then
+			local def = vim.api.nvim_get_hl(0, { name = name, link = false })
+			for _, key in ipairs({ "fg", "bg", "sp" }) do
+				if def[key] and not known[def[key]] then
+					table.insert(leaks, string.format("%s.%s=#%06x", name, key, def[key]))
+				end
+			end
+		end
+	end
+	table.sort(leaks)
+	assert(#leaks == 0, table.concat(leaks, ", "))
 end)
 
 if failures > 0 then

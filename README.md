@@ -53,7 +53,8 @@ With lazy.nvim, `opts` is passed to `setup()` for you. Otherwise call it yoursel
 require("dim-solarized").setup({
 	transparent = false, -- make the backgrounds of Normal, NormalFloat, etc. transparent
 	italic_comments = true, -- italicize comments
-	on_highlights = function(c) -- add or override highlight groups (see below)
+	on_colors = function(c) end, -- modify the palette in place (see below)
+	on_highlights = function(c, groups) -- add or override highlight groups (see below)
 		return {}
 	end,
 })
@@ -63,11 +64,22 @@ require("dim-solarized").setup({
 | --- | --- | --- | --- |
 | `transparent` | `boolean` | `false` | Make the backgrounds of `Normal`, `NormalFloat`, etc. transparent |
 | `italic_comments` | `boolean` | `true` | Italicize comments |
-| `on_highlights` | `fun(c): table` | function returning `{}` | Add or override highlight groups |
+| `on_colors` | `fun(c)` | no-op | Modify the palette `c` in place before highlights are built |
+| `on_highlights` | `fun(c, groups): table` | function returning `{}` | Add or override highlight groups |
 
 ## :art: Overriding Colors & Highlight Groups
 
-`on_highlights` receives the palette `c` and returns a table of `group name = nvim_set_hl definition`.
+`on_colors` receives the palette `c` and modifies it in place. The changes are reflected in the highlight groups, the `:terminal` colors, and the bundled statusline theme.
+
+```lua
+require("dim-solarized").setup({
+	on_colors = function(c)
+		c.bg = "#001f27"
+	end,
+})
+```
+
+`on_highlights` receives the palette `c` (after `on_colors`) and the built-in definitions `groups`, and returns a table of `group name = nvim_set_hl definition`.
 
 ```lua
 require("dim-solarized").setup({

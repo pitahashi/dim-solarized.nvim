@@ -1,4 +1,4 @@
-local c = require("dim-solarized.palette").get()
+local c = require("dim-solarized").colors()
 
 --- Build one mode section set. `a` is the mode label, `b`/`c` are the inner sections.
 ---@param accent string Background color of the mode label
