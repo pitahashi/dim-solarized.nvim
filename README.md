@@ -7,7 +7,7 @@ A Neovim colorscheme that keeps Solarized's hues but lowers lightness and chroma
 ## :sparkles: Features
 
 - Uses the same hue angles as the original Solarized, with uniform lightness and chroma across the 8 accents (about 6.1:1 contrast against the background for every accent)
-- Body text and comments are brighter than the original for readability (comment-to-background contrast goes from 2.8:1 in the original to about 4.0:1)
+- Body text and comments are brighter than the original for readability (comment-to-background contrast goes from 2.8:1 in the original to about 5.2:1)
 - The palette is computed from CIE LCh (`lua/dim-solarized/palette.lua`)
 - Covers Tree-sitter, LSP, diagnostics, diff, and the 16 `:terminal` colors
 

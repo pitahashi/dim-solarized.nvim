@@ -46,7 +46,39 @@ local function contrast(a, b)
 end
 
 local palette = require("dim-solarized.palette").get()
+local highlights = require("dim-solarized.highlights")
+local plugin = require("dim-solarized")
 local accents = { "yellow", "orange", "red", "magenta", "violet", "blue", "cyan", "green" }
+
+--- Convert #rrggbb to the integer that nvim_get_hl returns.
+---@param hex string
+---@return integer
+local function to_int(hex)
+	return tonumber(hex:sub(2), 16)
+end
+
+--- Restore the default options so tests do not leak state into each other.
+local function reset()
+	plugin.options = {
+		transparent = false,
+		italic_comments = true,
+		on_highlights = function()
+			return {}
+		end,
+	}
+end
+
+-- Groups drawn as separators, guides, or filler. They are meant to be subtle, so they only
+-- need to stay faintly visible (2:1) instead of reaching the text threshold.
+local DECORATIVE = {
+	VertSplit = true, WinSeparator = true, NonText = true, Whitespace = true, SpecialKey = true,
+	FloatBorder = true, TelescopeBorder = true, TelescopeResultsBorder = true,
+	TelescopePreviewBorder = true, SnacksIndent = true, PmenuThumb = true, PmenuSbar = true,
+	Conceal = true,
+}
+-- Groups that intentionally blend into their background to hide the element (e.g. the `~` after the last line)
+local HIDDEN = { EndOfBuffer = true, TelescopePromptBorder = true }
+local TEXT_MIN, DECORATIVE_MIN = 4.5, 2.0
 
 test("palette values are #rrggbb strings", function()
 	for key, value in pairs(palette) do
@@ -66,51 +98,201 @@ test("every accent has about 6.1:1 contrast against bg", function()
 	end
 end)
 
-test("comment has about 4.0:1 contrast against bg", function()
-	local ratio = contrast(palette.comment, palette.bg)
-	assert(ratio > 3.8 and ratio < 4.3, string.format("%.2f", ratio))
+test("accents keep the original Solarized hue order", function()
+	-- Hue angle of a color in CIE LCh is not exposed, so compare the dominant channel instead
+	local function channels(hex)
+		return tonumber(hex:sub(2, 3), 16), tonumber(hex:sub(4, 5), 16), tonumber(hex:sub(6, 7), 16)
+	end
+	local r, _, b = channels(palette.red)
+	assert(r > b, "red should be warm")
+	r, _, b = channels(palette.blue)
+	assert(b > r, "blue should be cool")
+	local _, g, b2 = channels(palette.green)
+	assert(g > b2, "green should have more green than blue")
 end)
 
-test("body text keeps at least 4.5:1 against bg", function()
-	local ratio = contrast(palette.fg, palette.bg)
-	assert(ratio >= 4.5, string.format("%.2f", ratio))
+test("comment and dim foreground have at least 4.5:1 against bg and bg_alt", function()
+	for _, bg in ipairs({ "bg", "bg_alt", "bg_float" }) do
+		for _, fg in ipairs({ "comment", "fg_dim" }) do
+			local ratio = contrast(palette[fg], palette[bg])
+			assert(ratio >= TEXT_MIN, string.format("%s on %s: %.2f", fg, bg, ratio))
+		end
+	end
+end)
+
+test("body text has at least 4.5:1 against every text background", function()
+	for _, bg in ipairs({ "bg", "bg_alt", "bg_sel", "bg_float", "diff_add", "diff_change", "diff_delete" }) do
+		local ratio = contrast(palette.fg, palette[bg])
+		assert(ratio >= TEXT_MIN, string.format("fg on %s: %.2f", bg, ratio))
+	end
+end)
+
+test("accents have at least 4.5:1 against selection and diff backgrounds", function()
+	for _, bg in ipairs({ "bg_alt", "bg_sel", "diff_change", "diff_delete" }) do
+		for _, name in ipairs(accents) do
+			local ratio = contrast(palette[name], palette[bg])
+			assert(ratio >= TEXT_MIN - 0.05, string.format("%s on %s: %.2f", name, bg, ratio))
+		end
+	end
+end)
+
+test("every highlight group with fg and bg is readable", function()
+	reset()
+	local failed = {}
+	for name, def in pairs(highlights.build(palette, plugin.options)) do
+		-- Only definitions that state both colors can be checked in isolation
+		if not HIDDEN[name] and def.fg and def.bg and def.fg:sub(1, 1) == "#" and def.bg:sub(1, 1) == "#" then
+			local min = DECORATIVE[name] and DECORATIVE_MIN or TEXT_MIN
+			local ratio = contrast(def.fg, def.bg)
+			if ratio < min - 0.05 then
+				table.insert(failed, string.format("%s %.2f", name, ratio))
+			end
+		end
+	end
+	table.sort(failed)
+	assert(#failed == 0, table.concat(failed, ", "))
+end)
+
+test("every highlight group with only fg is readable on bg", function()
+	reset()
+	local failed = {}
+	for name, def in pairs(highlights.build(palette, plugin.options)) do
+		if not HIDDEN[name] and def.fg and not def.bg and def.fg:sub(1, 1) == "#" and not def.link then
+			local min = DECORATIVE[name] and DECORATIVE_MIN or TEXT_MIN
+			local ratio = contrast(def.fg, palette.bg)
+			if ratio < min - 0.05 then
+				table.insert(failed, string.format("%s %.2f", name, ratio))
+			end
+		end
+	end
+	table.sort(failed)
+	assert(#failed == 0, table.concat(failed, ", "))
+end)
+
+test("link targets exist in the generated groups", function()
+	reset()
+	local groups = highlights.build(palette, plugin.options)
+	for name, def in pairs(groups) do
+		if def.link then
+			assert(groups[def.link], name .. " links to missing group " .. def.link)
+		end
+	end
+end)
+
+test("every generated group is accepted by nvim_set_hl", function()
+	reset()
+	for name, def in pairs(highlights.build(palette, plugin.options)) do
+		local ok, err = pcall(vim.api.nvim_set_hl, 0, name, def)
+		assert(ok, name .. ": " .. tostring(err))
+	end
 end)
 
 test("colorscheme loads and sets colors_name", function()
+	reset()
 	vim.cmd("colorscheme dim-solarized")
 	assert(vim.g.colors_name == "dim-solarized", tostring(vim.g.colors_name))
 	assert(vim.o.background == "dark")
 end)
 
-test("Normal and terminal colors are applied", function()
+test("loading twice gives the same result", function()
+	reset()
+	vim.cmd("colorscheme dim-solarized")
+	local first = vim.api.nvim_get_hl(0, { name = "Normal" })
+	vim.cmd("colorscheme dim-solarized")
+	assert(vim.inspect(first) == vim.inspect(vim.api.nvim_get_hl(0, { name = "Normal" })))
+end)
+
+test("background stays dark after setting it to light", function()
+	reset()
+	vim.cmd("colorscheme dim-solarized")
+	vim.o.background = "light"
+	vim.cmd("colorscheme dim-solarized")
+	assert(vim.o.background == "dark")
+end)
+
+test("Normal and terminal colors match the palette", function()
+	reset()
+	vim.cmd("colorscheme dim-solarized")
 	local normal = vim.api.nvim_get_hl(0, { name = "Normal" })
-	assert(normal.bg == tonumber(palette.bg:sub(2), 16), "Normal.bg")
+	assert(normal.bg == to_int(palette.bg), "Normal.bg")
+	assert(normal.fg == to_int(palette.fg), "Normal.fg")
+	assert(vim.g.terminal_color_1 == palette.red, "terminal_color_1")
+	assert(vim.g.terminal_color_4 == palette.blue, "terminal_color_4")
 	for i = 0, 15 do
-		assert(vim.g["terminal_color_" .. i], "terminal_color_" .. i)
+		local color = vim.g["terminal_color_" .. i]
+		assert(color and color:match("^#%x%x%x%x%x%x$"), "terminal_color_" .. i)
 	end
 end)
 
-test("transparent removes the Normal background", function()
-	require("dim-solarized").setup({ transparent = true })
+test("italic_comments toggles italic on Comment", function()
+	reset()
+	plugin.setup({ italic_comments = false })
 	vim.cmd("colorscheme dim-solarized")
-	assert(vim.api.nvim_get_hl(0, { name = "Normal" }).bg == nil)
-	require("dim-solarized").setup({ transparent = false })
+	assert(not vim.api.nvim_get_hl(0, { name = "Comment" }).italic)
+	plugin.setup({ italic_comments = true })
+	vim.cmd("colorscheme dim-solarized")
+	assert(vim.api.nvim_get_hl(0, { name = "Comment" }).italic)
 end)
 
-test("on_highlights overrides groups", function()
-	require("dim-solarized").setup({
+test("transparent removes only the Normal-family backgrounds", function()
+	reset()
+	plugin.setup({ transparent = true })
+	vim.cmd("colorscheme dim-solarized")
+	assert(vim.api.nvim_get_hl(0, { name = "Normal" }).bg == nil, "Normal")
+	assert(vim.api.nvim_get_hl(0, { name = "NormalFloat" }).bg == nil, "NormalFloat")
+	assert(vim.api.nvim_get_hl(0, { name = "CursorLine" }).bg == to_int(palette.bg_alt), "CursorLine")
+end)
+
+test("on_highlights overrides groups and wins over transparent", function()
+	reset()
+	plugin.setup({
+		transparent = true,
 		on_highlights = function(c)
-			return { CursorLine = { bg = c.red } }
+			return { CursorLine = { bg = c.red }, Normal = { fg = c.fg, bg = c.bg } }
 		end,
 	})
 	vim.cmd("colorscheme dim-solarized")
-	assert(vim.api.nvim_get_hl(0, { name = "CursorLine" }).bg == tonumber(palette.red:sub(2), 16))
+	assert(vim.api.nvim_get_hl(0, { name = "CursorLine" }).bg == to_int(palette.red), "CursorLine")
+	assert(vim.api.nvim_get_hl(0, { name = "Normal" }).bg == to_int(palette.bg), "Normal")
 end)
 
-test("lualine theme exposes every mode", function()
+test("overrides replace a group instead of merging attributes", function()
+	reset()
+	plugin.setup({
+		on_highlights = function(c)
+			return { Comment = { fg = c.red } }
+		end,
+	})
+	vim.cmd("colorscheme dim-solarized")
+	assert(not vim.api.nvim_get_hl(0, { name = "Comment" }).italic)
+end)
+
+test("invalid on_highlights values do not break loading", function()
+	for _, value in ipairs({ false, "x" }) do
+		reset()
+		plugin.options.on_highlights = value
+		vim.cmd("colorscheme dim-solarized")
+		assert(vim.g.colors_name == "dim-solarized")
+	end
+	reset()
+	plugin.setup({
+		on_highlights = function()
+			return nil
+		end,
+	})
+	vim.cmd("colorscheme dim-solarized")
+	assert(vim.g.colors_name == "dim-solarized")
+end)
+
+test("lualine theme exposes every mode with readable colors", function()
 	local theme = require("lualine.themes.dim-solarized")
 	for _, mode in ipairs({ "normal", "insert", "visual", "replace", "command", "terminal", "inactive" }) do
 		assert(theme[mode] and theme[mode].a and theme[mode].b and theme[mode].c, mode)
+		for _, section in ipairs({ "a", "b", "c" }) do
+			local s = theme[mode][section]
+			local ratio = contrast(s.fg, s.bg)
+			assert(ratio >= TEXT_MIN - 0.05, string.format("%s.%s: %.2f", mode, section, ratio))
+		end
 	end
 end)
 

@@ -170,7 +170,7 @@ function M.build(c, opts)
 		CmpItemMenu = { fg = c.fg_dim },
 		SnacksPickerDir = { fg = c.fg_dim },
 		SnacksPickerMatch = { fg = c.blue, bold = true },
-		SnacksIndent = { fg = c.bg_sel },
+		SnacksIndent = { fg = c.border },
 		SnacksIndentScope = { fg = c.cyan },
 		MiniIndentscopeSymbol = { fg = c.cyan },
 		MiniCursorword = { bg = c.bg_sel },
@@ -203,9 +203,11 @@ function M.build(c, opts)
 		MiniStatuslineModeCommand = { fg = c.bg, bg = c.yellow, bold = true },
 	}
 
-	-- Merge user overrides last (replaced per group)
-	for name, def in pairs(opts.on_highlights(c) or {}) do
-		groups[name] = def
+	-- Merge user overrides last (replaced per group); ignore on_highlights unless it is a function
+	if type(opts.on_highlights) == "function" then
+		for name, def in pairs(opts.on_highlights(c) or {}) do
+			groups[name] = def
+		end
 	end
 
 	return groups

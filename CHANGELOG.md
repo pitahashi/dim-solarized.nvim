@@ -15,7 +15,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Highlight groups for Tree-sitter, LSP, diagnostics, diff, and the 16 `:terminal` colors
 - Options `transparent`, `italic_comments`, and `on_highlights`
 - `scripts/gen_palette.lua` to regenerate `docs/palette.svg`
-- MIT `LICENSE`
+- Selection and diff backgrounds tuned so body text and accents keep at least 4.5:1 contrast on them; comments and secondary text reach about 5.2:1 against the background
+- Tests (`nvim -l tests/run.lua`) covering palette contrast, every generated highlight group, options, and loading behavior, run by GitHub Actions on Neovim v0.12.5, stable, and nightly
+- MIT `LICENSE` with the Solarized license notice (Copyright (c) 2011 Ethan Schoonover)
+- Requires Neovim 0.12.5 or later
+
+### Fixed
+
+- A non-function `on_highlights` value no longer raises an error while loading
 
 [Unreleased]: https://github.com/pitahashi/dim-solarized.nvim/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/pitahashi/dim-solarized.nvim/releases/tag/v0.1.0

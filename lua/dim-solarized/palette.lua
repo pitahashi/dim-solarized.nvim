@@ -99,19 +99,20 @@ local ACCENT_C = 32
 
 -- Background colors use the same hue, chroma, and lightness as the original (base03, base02).
 -- Foreground colors keep the original hue and chroma and only raise lightness above the original for readability
--- (body L* 60 -> 70, comments L* 45 -> 55; the comment-to-background contrast goes from 2.8:1 in the original to about 4.0:1)
+-- (body L* 60 -> 70, comments L* 45 -> 63; the comment-to-background contrast goes from 2.8:1 in the original to about 5.2:1).
+-- The selection and diff backgrounds are darker than the original-derived values so that body text and accents keep at least 4.5:1 on them
 ---@type table<"dark", DimSolarizedPalette>
 M.palettes = {
 	dark = {
 		bg = lch(15.5, BASE_C.bg, BASE_H.bg),
 		bg_alt = lch(20.3, BASE_C.bg_alt, BASE_H.bg_alt),
-		bg_sel = lch(28, 16, BASE_H.muted),
+		bg_sel = lch(25, 16, BASE_H.muted),
 		bg_float = lch(13, 14, BASE_H.bg),
 		fg = lch(70, BASE_C.text, BASE_H.text),
-		fg_dim = lch(55, BASE_C.muted, BASE_H.muted),
+		fg_dim = lch(63, BASE_C.muted, BASE_H.muted),
 		fg_bright = lch(87, BASE_C.bright, BASE_H.bright),
-		comment = lch(55, BASE_C.muted, BASE_H.muted),
-		border = lch(35, 17, BASE_H.muted),
+		comment = lch(63, BASE_C.muted, BASE_H.muted),
+		border = lch(42, 17, BASE_H.muted),
 		yellow = lch(ACCENT_L, ACCENT_C, HUES.yellow),
 		orange = lch(ACCENT_L, ACCENT_C, HUES.orange),
 		red = lch(ACCENT_L, ACCENT_C, HUES.red),
@@ -121,10 +122,10 @@ M.palettes = {
 		cyan = lch(ACCENT_L, ACCENT_C, HUES.cyan),
 		green = lch(ACCENT_L, ACCENT_C, HUES.green),
 		-- diff backgrounds are the original accent hues, darkened and desaturated
-		diff_add = lch(28, 17, HUES.cyan),
-		diff_change = lch(27, 17, HUES.blue),
-		diff_delete = lch(26, 10, HUES.magenta),
-		diff_text = lch(38, 20, HUES.blue),
+		diff_add = lch(24, 17, HUES.cyan),
+		diff_change = lch(23, 17, HUES.blue),
+		diff_delete = lch(22, 10, HUES.magenta),
+		diff_text = lch(34, 20, HUES.blue),
 	},
 }
 

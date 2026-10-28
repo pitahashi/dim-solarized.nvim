@@ -18,8 +18,8 @@ M.options = {
 }
 
 --- Apply user options. Call before running `colorscheme`.
+--- Example: `require("dim-solarized").setup({ transparent = true })`
 ---@param opts? DimSolarizedOptions|table Options to override
----@example require("dim-solarized").setup({ transparent = true })
 function M.setup(opts)
 	M.options = vim.tbl_deep_extend("force", M.options, opts or {})
 end
