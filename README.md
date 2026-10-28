@@ -10,25 +10,6 @@ A Neovim colorscheme that keeps Solarized's hues but lowers lightness and chroma
 - Body text and comments are brighter than the original for readability (comment-to-background contrast goes from 2.8:1 in the original to about 4.0:1)
 - The palette is computed from CIE LCh (`lua/dim-solarized/palette.lua`)
 - Covers Tree-sitter, LSP, diagnostics, diff, and the 16 `:terminal` colors
-- Supports a number of plugins (see below)
-
-## :electric_plug: Supported Plugins
-
-<details>
-<summary>Click to see the list</summary>
-
-| Plugin | Notes |
-| --- | --- |
-| [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) | |
-| [gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim) | |
-| [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) | Prompt, results, preview, selection, matching |
-| [lualine.nvim](https://github.com/nvim-lualine/lualine.nvim) | Bundled theme (see Usage) |
-| [snacks.nvim](https://github.com/folke/snacks.nvim) | Picker, indent |
-| [mini.nvim](https://github.com/echasnovski/mini.nvim) | indentscope, cursorword, starter, statusline |
-
-Groups from other plugins are not defined. Add them with `on_highlights` if you need them.
-
-</details>
 
 ## :clipboard: Requirements
 
@@ -61,28 +42,6 @@ colorscheme dim-solarized
 ```
 
 `setup()` is optional. Without it, the defaults are used.
-
-<details>
-<summary>lualine.nvim</summary>
-
-A lualine theme is bundled. With `theme = "auto"` it is picked up from the colorscheme name, or you can set it explicitly:
-
-```lua
-require("lualine").setup({
-	options = { theme = "dim-solarized" },
-})
-```
-
-The lualine theme does not follow `transparent`.
-
-</details>
-
-<details>
-<summary>telescope.nvim</summary>
-
-The `Telescope*` highlight groups are defined, so no extra setup is needed. With `transparent = true`, the result and preview backgrounds become transparent, while the prompt keeps its background.
-
-</details>
 
 ## :wrench: Configuration
 
@@ -164,7 +123,7 @@ The palette image is generated from `palette.lua`. Regenerate it after changing 
 nvim -l scripts/gen_palette.lua
 ```
 
-Run the tests (palette contrast, loading, options, lualine theme):
+Run the tests (palette contrast, loading, options):
 
 ```sh
 nvim -l tests/run.lua

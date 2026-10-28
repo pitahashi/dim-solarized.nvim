@@ -13,7 +13,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Dark colorscheme that keeps Solarized's hue angles with lower lightness and chroma
 - Palette computed from CIE LCh (`lua/dim-solarized/palette.lua`)
 - Highlight groups for Tree-sitter, LSP, diagnostics, diff, and the 16 `:terminal` colors
-- Plugin support: nvim-cmp, gitsigns.nvim, telescope.nvim, lualine.nvim (bundled theme), snacks.nvim, mini.nvim
 - Options `transparent`, `italic_comments`, and `on_highlights`
 - `scripts/gen_palette.lua` to regenerate `docs/palette.svg`
 - MIT `LICENSE`
