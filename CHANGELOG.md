@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Selection and diff backgrounds tuned so body text and accents keep at least 4.5:1 contrast on them; comments and secondary text reach about 5.2:1 against the background
 - Tests (`nvim -l tests/run.lua`) covering palette contrast, every generated highlight group, options, and loading behavior, run by GitHub Actions on Neovim v0.12.5, stable, and nightly
 - MIT `LICENSE` with the Solarized license notice (Copyright (c) 2011 Ethan Schoonover)
+- Help file `doc/dim-solarized.txt`, available with `:help dim-solarized`
 - Requires Neovim 0.12.5 or later
 
 ### Fixed

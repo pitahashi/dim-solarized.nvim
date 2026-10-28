@@ -1,0 +1,195 @@
+*dim-solarized.txt*  A dim, dark Solarized-based colorscheme   *dim-solarized*
+
+==============================================================================
+CONTENTS                                              *dim-solarized-contents*
+
+  1. Introduction ........................... |dim-solarized-introduction|
+  2. Requirements ........................... |dim-solarized-requirements|
+  3. Installation ........................... |dim-solarized-installation|
+  4. Usage .................................. |dim-solarized-usage|
+  5. Configuration .......................... |dim-solarized-configuration|
+  6. Overriding colors and highlights ....... |dim-solarized-overrides|
+  7. Palette ................................ |dim-solarized-palette|
+  8. API .................................... |dim-solarized-api|
+  9. Troubleshooting ........................ |dim-solarized-troubleshooting|
+ 10. License and credits .................... |dim-solarized-license|
+
+==============================================================================
+1. INTRODUCTION                                   *dim-solarized-introduction*
+
+dim-solarized.nvim keeps the hue angles of Solarized but lowers lightness and
+chroma so the colors are easier on the eyes. Only a dark theme is provided.
+
+  - The 8 accents share one lightness and chroma (about 6.1:1 contrast
+    against the background).
+  - Body text and comments are brighter than in the original (comments reach
+    about 5.2:1 against the background).
+  - The palette is computed from CIE LCh in `lua/dim-solarized/palette.lua`.
+  - Tree-sitter groups, LSP semantic tokens, diagnostics, diff and the 16
+    |terminal| colors are covered.
+
+==============================================================================
+2. REQUIREMENTS                                   *dim-solarized-requirements*
+
+  - Neovim 0.12.5 or later. Older versions are not guaranteed to work.
+  - 24-bit color: `vim.o.termguicolors = true`
+
+==============================================================================
+3. INSTALLATION                                   *dim-solarized-installation*
+
+With lazy.nvim: >lua
+    {
+        "pitahashi/dim-solarized.nvim",
+        lazy = false,
+        priority = 1000,
+        opts = {},
+    }
+<
+`lazy = false` and `priority = 1000` make the colorscheme load before other
+plugins. lazy.nvim passes `opts` to |dim-solarized.setup()|.
+
+==============================================================================
+4. USAGE                                                 *dim-solarized-usage*
+>lua
+    vim.cmd([[colorscheme dim-solarized]])
+<
+>vim
+    colorscheme dim-solarized
+<
+|dim-solarized.setup()| is optional. Without it the defaults are used.
+Running |:colorscheme| pins 'background' to `dark`; a light theme is not
+supported.
+
+==============================================================================
+5. CONFIGURATION                                 *dim-solarized-configuration*
+
+Set the options BEFORE loading the colorscheme. If |dim-solarized.setup()| is
+called afterwards, the options take effect the next time you run
+`:colorscheme dim-solarized`. >lua
+
+    require("dim-solarized").setup({
+        transparent = false,
+        italic_comments = true,
+        on_colors = function(c) end,
+        on_highlights = function(c, groups)
+            return {}
+        end,
+    })
+<
+                                                    *dim-solarized-options*
+transparent        boolean (default: false)
+                   Make the backgrounds of Normal, NormalNC, NormalFloat and
+                   related groups transparent.
+
+italic_comments    boolean (default: true)
+                   Italicize comments.
+
+on_colors          fun(c) (default: no-op)
+                   Modify the palette `c` in place before highlights are
+                   built. See |dim-solarized-overrides|.
+
+on_highlights      fun(c, groups): table (default: returns `{}`)
+                   Add or override highlight groups. See
+                   |dim-solarized-overrides|.
+
+Values that are not functions are ignored for `on_colors` and
+`on_highlights`.
+
+==============================================================================
+6. OVERRIDING COLORS AND HIGHLIGHTS                  *dim-solarized-overrides*
+
+`on_colors` receives the palette `c` and changes it in place. The result is
+used for the highlight groups, the |terminal| colors and the bundled lualine
+theme. >lua
+
+    require("dim-solarized").setup({
+        on_colors = function(c)
+            c.bg = "#001f27"
+        end,
+    })
+<
+`on_highlights` receives the palette `c` (after `on_colors`) and `groups`, the
+built-in definitions, and returns a table of `group name = nvim_set_hl
+definition`. >lua
+
+    require("dim-solarized").setup({
+        on_highlights = function(c, groups)
+            return {
+                CursorLine = { bg = c.bg_sel },
+                ["@comment.todo"] = { fg = c.orange, bold = true },
+            }
+        end,
+    })
+<
+Notes:
+
+  - A returned group replaces the existing definition as a whole; attributes
+    are not merged. To change only `fg`, rewrite any `bg` or `bold` you want
+    to keep. The built-in definition is available as `groups.<name>`.
+  - The returned values are applied last, so they take precedence over
+    `transparent`.
+  - The palette passed to the callbacks is a copy. Changing it does not
+    affect other callers.
+
+Groups for plugins that this colorscheme does not define can be added with
+`on_highlights`.
+
+==============================================================================
+7. PALETTE                                             *dim-solarized-palette*
+
+Keys available in `c`:
+
+  bg, bg_alt, bg_sel, bg_float   Normal background, cursor line and similar,
+                                 selection, floating windows
+  fg, fg_dim, fg_bright          Normal, secondary and emphasized foreground
+  comment, border                Comments, borders
+  yellow, orange, red, magenta,
+  violet, blue, cyan, green      The 8 accents
+  diff_add, diff_change,
+  diff_delete, diff_text         Diff backgrounds
+
+==============================================================================
+8. API                                                     *dim-solarized-api*
+
+                                                       *dim-solarized.setup()*
+require("dim-solarized").setup({opts})
+    Apply user options. Call before running `:colorscheme`.
+
+    Parameters: ~
+      {opts}  (table|nil)  Options to override. See |dim-solarized-options|.
+
+                                                      *dim-solarized.colors()*
+require("dim-solarized").colors()
+    Return a copy of the palette with `on_colors` applied.
+
+    Return: ~
+      (table)  Palette keyed as in |dim-solarized-palette|.
+
+                                                        *dim-solarized.load()*
+require("dim-solarized").load()
+    Apply the colorscheme. Called by `:colorscheme dim-solarized`.
+
+==============================================================================
+9. TROUBLESHOOTING                             *dim-solarized-troubleshooting*
+
+  - Colors are not applied: check that |dim-solarized.setup()| is called
+    before `:colorscheme` and that 'termguicolors' is enabled.
+  - Colors from another colorscheme remain: with lazy.nvim, check that
+    `lazy = false` and `priority = 1000` are set.
+  - Options changed after loading have no effect: run
+    `:colorscheme dim-solarized` again.
+
+==============================================================================
+10. LICENSE AND CREDITS                                *dim-solarized-license*
+
+MIT License. See the LICENSE file in the repository.
+
+The color design is based on Solarized
+(https://ethanschoonover.com/solarized/) by Ethan Schoonover (MIT License).
+This project is an independent work and is not affiliated with the original.
+The Solarized license notice is included in the LICENSE file.
+
+This project was created with the assistance of AI (Claude, by Anthropic). The
+code and documentation may contain errors or unintended behavior.
+
+ vim:tw=78:ts=8:ft=help:norl:

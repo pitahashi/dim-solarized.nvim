@@ -441,6 +441,46 @@ test("every Treesitter and LSP group is readable once links are resolved", funct
 	assert(#failed == 0, table.concat(failed, ", "))
 end)
 
+test("help file generates tags and every reference resolves", function()
+	-- Work on a copy so the repository does not get a generated doc/tags file
+	local tmp = vim.fn.tempname()
+	vim.fn.mkdir(tmp .. "/doc", "p")
+	vim.fn.writefile(vim.fn.readfile(root .. "/doc/dim-solarized.txt"), tmp .. "/doc/dim-solarized.txt")
+	-- helptags raises on duplicate tags (E154)
+	vim.cmd("helptags " .. tmp .. "/doc")
+	local tags = table.concat(vim.fn.readfile(tmp .. "/doc/tags"), "\n")
+	assert(tags:find("dim%-solarized%-options", 1), "dim-solarized-options")
+	assert(tags:find("dim%-solarized%.setup%(%)", 1), "dim-solarized.setup()")
+
+	local text = table.concat(vim.fn.readfile(root .. "/doc/dim-solarized.txt"), "\n")
+	local defined = {}
+	for tag in text:gmatch("%*([^%*%s]+)%*") do
+		defined[tag] = true
+	end
+	for ref in text:gmatch("|([^|%s]+)|") do
+		-- Options, commands and built-in help tags are not defined in this file
+		if not ref:match("^[':]") and ref ~= "terminal" then
+			assert(defined[ref], "undefined help reference: " .. ref)
+		end
+	end
+end)
+
+test("help file documents every option and palette key", function()
+	local text = table.concat(vim.fn.readfile(root .. "/doc/dim-solarized.txt"), "\n")
+	for name in pairs(plugin.options) do
+		assert(text:find(name, 1, true), "option not documented: " .. name)
+	end
+	for name in pairs(palette) do
+		assert(text:find(name, 1, true), "palette key not documented: " .. name)
+	end
+end)
+
+test("help file lines fit in 78 columns", function()
+	for i, line in ipairs(vim.fn.readfile(root .. "/doc/dim-solarized.txt")) do
+		assert(#line <= 78, string.format("line %d has %d columns", i, #line))
+	end
+end)
+
 if failures > 0 then
 	print(failures .. " test(s) failed")
 	os.exit(1)

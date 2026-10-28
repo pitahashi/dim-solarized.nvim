@@ -43,6 +43,8 @@ colorscheme dim-solarized
 
 `setup()` is optional. Without it, the defaults are used.
 
+Full documentation is also available in Neovim with `:help dim-solarized`.
+
 ## :wrench: Configuration
 
 > Set the configuration **BEFORE** loading the colorscheme. If you call `setup()` afterwards, the options do not take effect until you run `colorscheme dim-solarized` again.
