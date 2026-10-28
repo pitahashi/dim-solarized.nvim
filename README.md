@@ -1,0 +1,161 @@
+# dim-solarized.nvim
+
+A Neovim colorscheme that keeps Solarized's hues but lowers lightness and chroma to be easier on the eyes. Dark theme only.
+
+![dim-solarized palette](docs/palette.svg)
+
+## :sparkles: Features
+
+- Uses the same hue angles as the original Solarized, with uniform lightness and chroma across the 8 accents (about 6.1:1 contrast against the background for every accent)
+- Body text and comments are brighter than the original for readability (comment-to-background contrast goes from 2.8:1 in the original to about 4.0:1)
+- The palette is computed from CIE LCh (`lua/dim-solarized/palette.lua`)
+- Covers Tree-sitter, LSP, diagnostics, diff, and the 16 `:terminal` colors
+- Supports a number of plugins (see below)
+
+## :electric_plug: Supported Plugins
+
+<details>
+<summary>Click to see the list</summary>
+
+| Plugin | Notes |
+| --- | --- |
+| [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) | |
+| [gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim) | |
+| [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) | Prompt, results, preview, selection, matching |
+| [lualine.nvim](https://github.com/nvim-lualine/lualine.nvim) | Bundled theme (see Usage) |
+| [snacks.nvim](https://github.com/folke/snacks.nvim) | Picker, indent |
+| [mini.nvim](https://github.com/echasnovski/mini.nvim) | indentscope, cursorword, starter, statusline |
+
+Groups from other plugins are not defined. Add them with `on_highlights` if you need them.
+
+</details>
+
+## :clipboard: Requirements
+
+- Neovim (the tested version is unknown; Tree-sitter group names such as `@markup.*` follow the 0.10+ naming, so 0.10 or later is recommended)
+- A terminal with 24-bit color support (`vim.o.termguicolors = true`)
+
+## :package: Installation
+
+Install with [lazy.nvim](https://github.com/folke/lazy.nvim):
+
+```lua
+{
+	"pitahashi/dim-solarized.nvim",
+	lazy = false,
+	priority = 1000,
+	opts = {},
+}
+```
+
+`lazy = false` and `priority = 1000` make the colorscheme load before other plugins.
+
+## :rocket: Usage
+
+```lua
+vim.cmd([[colorscheme dim-solarized]])
+```
+
+```vim
+colorscheme dim-solarized
+```
+
+`setup()` is optional. Without it, the defaults are used.
+
+<details>
+<summary>lualine.nvim</summary>
+
+A lualine theme is bundled. With `theme = "auto"` it is picked up from the colorscheme name, or you can set it explicitly:
+
+```lua
+require("lualine").setup({
+	options = { theme = "dim-solarized" },
+})
+```
+
+The lualine theme does not follow `transparent`.
+
+</details>
+
+<details>
+<summary>telescope.nvim</summary>
+
+The `Telescope*` highlight groups are defined, so no extra setup is needed. With `transparent = true`, the result and preview backgrounds become transparent, while the prompt keeps its background.
+
+</details>
+
+## :wrench: Configuration
+
+> Set the configuration **BEFORE** loading the colorscheme. If you call `setup()` afterwards, the options do not take effect until you run `colorscheme dim-solarized` again.
+
+With lazy.nvim, `opts` is passed to `setup()` for you. Otherwise call it yourself:
+
+```lua
+require("dim-solarized").setup({
+	transparent = false, -- make the backgrounds of Normal, NormalFloat, etc. transparent
+	italic_comments = true, -- italicize comments
+	on_highlights = function(c) -- add or override highlight groups (see below)
+		return {}
+	end,
+})
+```
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `transparent` | `boolean` | `false` | Make the backgrounds of `Normal`, `NormalFloat`, etc. transparent |
+| `italic_comments` | `boolean` | `true` | Italicize comments |
+| `on_highlights` | `fun(c): table` | function returning `{}` | Add or override highlight groups |
+
+## :art: Overriding Colors & Highlight Groups
+
+`on_highlights` receives the palette `c` and returns a table of `group name = nvim_set_hl definition`.
+
+```lua
+require("dim-solarized").setup({
+	on_highlights = function(c)
+		return {
+			CursorLine = { bg = c.bg_sel },
+			["@comment.todo"] = { fg = c.orange, bold = true },
+		}
+	end,
+})
+```
+
+Notes:
+
+- Returned groups replace the existing definition as a whole; they are not merged per attribute. Even if you only want to change `fg`, you must rewrite any `bg` or `bold` you want to keep.
+- The returned values are applied last, so they take precedence over `transparent`.
+
+The main keys available in `c` are:
+
+| Key | Purpose |
+| --- | --- |
+| `bg`, `bg_alt`, `bg_sel`, `bg_float` | Normal background, cursor line and similar, selection, floating windows |
+| `fg`, `fg_dim`, `fg_bright` | Normal, secondary, and emphasized foreground |
+| `comment`, `border` | Comments, borders |
+| `yellow`, `orange`, `red`, `magenta`, `violet`, `blue`, `cyan`, `green` | The 8 accents |
+| `diff_add`, `diff_change`, `diff_delete`, `diff_text` | diff backgrounds |
+
+The colors are defined in `lua/dim-solarized/palette.lua`.
+
+## :mag: Troubleshooting
+
+- Colors are not applied: check that `setup()` is called before `colorscheme` and that `termguicolors` is enabled.
+- Colors from another colorscheme remain: check that `lazy = false` and `priority = 1000` are set in lazy.nvim.
+- Running `:colorscheme` pins `background` to `dark`. A light theme is not supported.
+
+## :robot: AI Disclosure
+
+This project was created with the assistance of AI (Claude, by Anthropic). The code, documentation, and palette were generated by AI and may contain errors or unintended behavior. Review the code before relying on it, and please report problems through issues.
+
+## :page_facing_up: License
+
+[MIT](LICENSE)
+
+## :hammer: Development
+
+The palette image is generated from `palette.lua`. Regenerate it after changing the palette.
+
+```sh
+nvim -l scripts/gen_palette.lua
+```
