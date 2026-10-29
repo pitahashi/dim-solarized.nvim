@@ -6,8 +6,8 @@ A Solarized-based Neovim colorscheme with the original Solarized dark background
 
 ## :sparkles: Features
 
-- A shared chroma for all 8 accents and a shared lightness except red, orange, and magenta, which are slightly lighter to tell them apart (5.7-7.0:1 contrast against the background)
-- Body text and comments are lighter than in the original for readability (comment contrast goes from 2.8:1 to about 5.7:1)
+- A shared lightness and chroma for the 8 accents, except orange and magenta (slightly lighter), red (more chroma), and cyan (less chroma), which are adjusted to tell them apart (5.7-7.0:1 contrast against the background)
+- Body text and comments are lighter than in the original for readability (comment contrast goes from 2.8:1 to about 5.2:1)
 - The palette is computed from CIE LCh (`lua/dim-solarized/palette.lua`)
 - Covers Tree-sitter, LSP semantic tokens, diagnostics, diff, and the 16 `:terminal` colors
 
