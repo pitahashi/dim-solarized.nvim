@@ -1,0 +1,12 @@
+diff --git a/notes.lua b/notes.lua
+index 1234567..89abcde 100644
+--- a/notes.lua
++++ b/notes.lua
+@@ -1,4 +1,6 @@
+ local titles = {}
+ for _, note in ipairs(notes) do
+-  titles[#titles + 1] = note.title
++  if not note.archived then
++    titles[#titles + 1] = note.title
++  end
+ end

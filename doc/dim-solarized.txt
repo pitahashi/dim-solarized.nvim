@@ -13,13 +13,15 @@ CONTENTS                                              *dim-solarized-contents*
   8. API .................................... |dim-solarized-api|
   9. Troubleshooting ........................ |dim-solarized-troubleshooting|
  10. License and credits .................... |dim-solarized-license|
+ 11. Validation ............................. |dim-solarized-validation|
 
 ==============================================================================
 1. INTRODUCTION                                   *dim-solarized-introduction*
 
 dim-solarized.nvim is a Solarized-based colorscheme with the original
-Solarized dark background and lower lightness and chroma, so the colors
-are easier on the eyes. It is dark only.
+Solarized dark background and accent hue balance. Chroma is generally
+reduced; text and accents are lighter than the originals for readability.
+"Dim" describes restrained emphasis, not lower lightness. It is dark only.
 
   - The 8 accents share the same lightness and chroma, except orange and
     magenta (slightly lighter), red (more chroma), and cyan (less chroma)
@@ -29,11 +31,22 @@ are easier on the eyes. It is dark only.
   - The palette is computed from CIE LCh in `lua/dim-solarized/palette.lua`.
   - Covers Tree-sitter groups, LSP semantic tokens, diagnostics, diff, and
     the 16 |terminal| colors.
+  - Variables and properties use normal text; functions blue, types yellow,
+    keywords green, and strings cyan. Delimiters use secondary text.
+  - Line numbers use fg_subtle (4.66:1 on bg), below comments (5.23:1) and
+    body text (6.52:1). Inactive statuslines retain fg_dim on bg_alt.
+  - Visual uses a low-chroma background with a light foreground (7.61:1),
+    replacing syntax colors while selected to keep comments readable.
+    LSP references use a quieter background and an underline.
+  - Surface separation is checked separately from text contrast.
 
 ==============================================================================
 2. REQUIREMENTS                                   *dim-solarized-requirements*
 
-  - Neovim 0.12.5 or later. Older versions are not guaranteed to work.
+  - Neovim 0.9.5 or later. CI checks 0.9.5, 0.10.4, 0.11.5, 0.12.5,
+    stable, and nightly. Nightly is a compatibility probe.
+    The runtime uses nvim_set_hl (since 0.5); tests use nvim_get_hl and
+    the -l runner (since 0.9). Older untested versions are not supported.
   - 24-bit color: `vim.o.termguicolors = true`
 
 ==============================================================================
@@ -140,12 +153,22 @@ Keys available in `c`:
 
   bg, bg_alt, bg_sel, bg_float   Normal background, cursor line and similar,
                                  selection, floating windows
-  fg, fg_dim, fg_bright          Normal, secondary and emphasized foreground
+  fg, fg_dim, fg_subtle,         Normal, secondary, auxiliary UI,
+  fg_bright                       emphasized foreground
   comment, border                Comments, borders
   yellow, orange, red, magenta,
   violet, blue, cyan, green      The 8 accents
   diff_add, diff_change,
   diff_delete, diff_text         Diff backgrounds
+
+The six ANSI normal/bright accent pairs intentionally share colors to avoid
+extra bright accents. Applications that rely only on this distinction lose
+it. Black/bright black and white/bright white remain distinct. ANSI black is
+a surface color, not readable text on bg.
+
+Default contrast targets assume opaque backgrounds. Transparent mode and
+user overrides depend on the terminal background. Selected syntax uses
+fg_bright; raw comment color on bg_sel is not a supported text pairing.
 
 ==============================================================================
 8. API                                                     *dim-solarized-api*
@@ -190,5 +213,27 @@ Solarized's license notice is included in the LICENSE file.
 
 This project was built with the help of AI (Claude, by Anthropic). The code
 and documentation may contain bugs or unexpected behavior.
+
+==============================================================================
+11. VALIDATION                                      *dim-solarized-validation*
+
+From the repository root, run the Lua tests (no external dependencies): >
+    nvim -l tests/run.lua
+<
+Check rendered colors with the bundled Lua Tree-sitter parser and a fixed
+LSP server fixture (requires Python 3, standard library only): >
+    nvim -l tests/render.lua
+<
+Repeat with an installed Lua Language Server: >
+    nvim -l tests/render.lua --real-lsp
+<
+Both modes read actual Neovim UI colors at 16 positions in six scenes:
+Tree-sitter alone, combined semantic tokens, linewise selection, deselection,
+characterwise selection, and blockwise selection. All selected text uses
+fg_bright on bg_sel; syntax colors return after deselection.
+
+Both modes passed locally on Neovim 0.9.5, 0.10.4, 0.11.5, and 0.12.6,
+using LuaLS 3.18.2-dev for the real-server check. CI includes the fixed-server
+test.
 
  vim:tw=78:ts=8:ft=help:norl:

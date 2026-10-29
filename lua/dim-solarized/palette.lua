@@ -5,6 +5,7 @@
 ---@field bg_float string Background of floating windows
 ---@field fg string Normal foreground
 ---@field fg_dim string Secondary foreground
+---@field fg_subtle string Line numbers and auxiliary UI on the normal background
 ---@field fg_bright string Emphasized foreground
 ---@field comment string Comments
 ---@field border string Borders
@@ -43,13 +44,14 @@ local BASE_H = { bg = 229.9, bg_alt = 229.2, text = 209.0, muted = 257.6, bright
 local BASE_C = { bg = 14.5, bg_alt = 15.6, text = 6.4, muted = 8.6, bright = 10.0 }
 
 -- Lightness and chroma shared by all accents. The original uses L* 49-60, C* 34-77.
--- L* sits slightly below the body foreground (L* 70) to reduce glare, and C* is about 45-100% of the original.
--- Hues match the original and L*/C* are the same for every accent, so each one has the same contrast of about 5.9:1 against the background
+-- Accents are lighter than the originals, but below body text (L* 70),
+-- except for the warm-hue offsets below. Chroma is reduced from Solarized;
+-- red retains extra chroma relative to the shared accent target.
 local ACCENT_L = 66
 local ACCENT_C = 36
 
 -- Per-accent L* offsets for the warm hues, which look alike at equal lightness (red, orange, magenta).
--- Offsets are only positive so every accent keeps at least 4.5:1 contrast on the selection background
+-- These offsets distinguish warm hues without introducing new colors.
 local ACCENT_L_SHIFT = { red = 0, magenta = 3, orange = 6 }
 
 -- Per-accent chroma offsets. Red keeps the original hue but gets extra chroma, so it stays red instead of washing out to salmon at the shared lightness.
@@ -71,18 +73,21 @@ local function accent_l(name)
 end
 
 -- Backgrounds follow the original Solarized base03 and base02. Selection and border share their hue, and the muted foreground follows Twitter's "Dim" theme.
--- Foregrounds keep the original's hue and chroma and are only made lighter for readability
--- (body L* 60 -> 70, comments L* 45 -> 63; comment contrast against the background goes from 2.8:1 in the original to about 5.7:1).
--- Selection and diff backgrounds are darker than the values derived from the original, so body text and accents keep at least 4.5:1 contrast on them
+-- Body text retains Solarized base0's hue/chroma with higher lightness
+-- (L* 60 -> 70). Secondary text uses the muted hue above at L* 63;
+-- comments reach about 5.2:1 against bg versus 2.8:1 in Solarized.
+-- Selection is a lighter, less chromatic surface. Visual supplies its own
+-- foreground so comments and syntax colors do not lose contrast on it.
 ---@type table<"dark", DimSolarizedPalette>
 M.palettes = {
 	dark = {
 		bg = lch(15.5, BASE_C.bg, BASE_H.bg),
 		bg_alt = lch(20.3, BASE_C.bg_alt, BASE_H.bg_alt),
-		bg_sel = lch(22.5, 14, BASE_H.bg_alt),
+		bg_sel = lch(26.5, 8, BASE_H.bg_alt),
 		bg_float = lch(12.5, 13, BASE_H.bg),
 		fg = lch(70, BASE_C.text, BASE_H.text),
 		fg_dim = lch(63, BASE_C.muted, BASE_H.muted),
+		fg_subtle = lch(59.5, BASE_C.muted, BASE_H.muted),
 		fg_bright = lch(87, BASE_C.bright, BASE_H.bright),
 		comment = lch(63, BASE_C.muted, BASE_H.muted),
 		border = lch(38, 10, BASE_H.bg_alt),

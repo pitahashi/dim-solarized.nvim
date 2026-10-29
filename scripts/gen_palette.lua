@@ -8,7 +8,7 @@ local color = require("dim-solarized.color")
 -- `against` is the color each member is measured against: text colors on the background, and the body text on background-like colors
 local groups = {
 	{ "Background", "Surfaces, measured with fg text on top", "fg", { "bg", "bg_alt", "bg_sel", "bg_float", "border" }, true },
-	{ "Foreground", "Text, measured on bg", "bg", { "fg", "fg_dim", "fg_bright", "comment" } },
+	{ "Foreground", "Text, measured on bg", "bg", { "fg", "fg_dim", "fg_subtle", "fg_bright", "comment" } },
 	{ "Accent", "Shared lightness and chroma, hues from Solarized, measured on bg", "bg", { "yellow", "orange", "red", "magenta", "violet", "blue", "cyan", "green" } },
 	{ "Diff", "Backgrounds, measured with fg text on top", "fg", { "diff_add", "diff_change", "diff_delete", "diff_text" }, true },
 }

@@ -1,0 +1,15 @@
+local M = {}
+
+-- Select this comment together with a string and a normal identifier.
+function M.titles(notes)
+  local label = "Recent notes"
+  local titles = {}
+  for _, note in ipairs(notes) do
+    if not note.archived then
+      titles[#titles + 1] = note.title
+    end
+  end
+  return label, titles
+end
+
+return M

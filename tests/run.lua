@@ -52,6 +52,12 @@ local DECORATIVE = {
 local HIDDEN = { EndOfBuffer = true, TelescopePromptBorder = true }
 local TEXT_MIN, DECORATIVE_MIN = 4.5, 2.0
 
+test("contrast calculation matches WCAG reference pairs", function()
+	assert(math.abs(contrast("#000000", "#ffffff") - 21) < 0.001)
+	assert(contrast("#002b36", "#002b36") == 1)
+	assert(math.abs(contrast("#777777", "#ffffff") - 4.478) < 0.001)
+end)
+
 test("palette values are #rrggbb strings", function()
 	for key, value in pairs(palette) do
 		assert(type(value) == "string" and value:match("^#%x%x%x%x%x%x$"), key .. " = " .. tostring(value))
@@ -106,8 +112,8 @@ test("body text has at least 4.5:1 against every text background", function()
 	end
 end)
 
-test("accents have at least 4.5:1 against selection and diff backgrounds", function()
-	for _, bg in ipairs({ "bg_alt", "bg_sel", "diff_change", "diff_delete" }) do
+test("accents have at least 4.5:1 on cursor line and syntax-preserving diff surfaces", function()
+	for _, bg in ipairs({ "bg_alt", "diff_change", "diff_delete" }) do
 		for _, name in ipairs(accents) do
 			local ratio = contrast(palette[name], palette[bg])
 			assert(ratio >= TEXT_MIN - 0.05, string.format("%s on %s: %.2f", name, bg, ratio))
@@ -293,6 +299,9 @@ test("on_colors changes the palette used by highlights, terminal colors and colo
 	assert(plugin.colors().red == "#ff0000", "colors()")
 	assert(vim.g.terminal_color_1 == "#ff0000", "terminal_color_1")
 	assert(vim.api.nvim_get_hl(0, { name = "Substitute" }).bg == to_int("#ff0000"), "Substitute")
+	package.loaded["lualine.themes.dim-solarized"] = nil
+	assert(require("lualine.themes.dim-solarized").replace.a.bg == "#ff0000", "lualine override")
+	package.loaded["lualine.themes.dim-solarized"] = nil
 	assert(require("dim-solarized.palette").get().red == palette.red, "base palette must stay untouched")
 	reset()
 end)
@@ -363,30 +372,37 @@ test("every standard LSP semantic token type is mapped", function()
 	}
 	for _, name in ipairs(types) do
 		local def = vim.api.nvim_get_hl(0, { name = "@lsp.type." .. name, link = false })
-		-- "variable" is intentionally left out: it falls back to the Tree-sitter color
+		-- Generic variables explicitly retain the underlying syntax/Tree-sitter color.
 		assert(name == "variable" or def.fg, "@lsp.type." .. name .. " has no color")
 	end
 end)
 
-test("semantic token roles have distinct looks", function()
+test("routine identifiers are neutral across syntax, Tree-sitter and LSP", function()
 	reset()
 	vim.cmd("colorscheme dim-solarized")
-	local function resolved(name)
-		return vim.inspect(vim.api.nvim_get_hl(0, { name = name, link = false }))
+	local function fg(name)
+		return vim.api.nvim_get_hl(0, { name = name, link = false }).fg
 	end
-	local roles = {
-		"@variable", "@variable.builtin", "@variable.parameter", "@type", "@type.builtin",
-		"@function", "@function.macro", "@constant", "@string", "@keyword", "@attribute",
-	}
-	local seen = {}
-	for _, role in ipairs(roles) do
-		local key = resolved(role)
-		-- Constants share the string color and functions share the variable color on purpose (as in Solarized), so both are skipped
-		if role ~= "@constant" and role ~= "@function" then
-			assert(not seen[key], role .. " looks the same as " .. tostring(seen[key]))
-			seen[key] = role
-		end
+	for _, name in ipairs({ "Identifier", "@variable", "@variable.parameter", "@property",
+		"@lsp.type.parameter", "@lsp.type.property" }) do
+		assert(fg(name) == to_int(palette.fg), name)
 	end
+	-- Leave generic semantic variables uncolored so a server cannot erase
+	-- more specific Tree-sitter captures (e.g. callable names).
+	assert(not fg("@lsp.type.variable"))
+	for _, pair in ipairs({
+		{ "@lsp.type.function", "@function" }, { "@lsp.type.method", "@function.method" },
+		{ "@lsp.type.type", "@type" }, { "@lsp.type.keyword", "@keyword" },
+		{ "@lsp.type.string", "@string" }, { "@lsp.type.comment", "@comment" },
+	}) do
+		assert(fg(pair[1]) == fg(pair[2]), table.concat(pair, " / "))
+	end
+	assert(fg("Function") == to_int(palette.blue))
+	assert(fg("Function") ~= fg("Identifier"))
+	for _, name in ipairs({ "Delimiter", "@punctuation.delimiter", "@punctuation.bracket", "@markup.list" }) do
+		assert(fg(name) == to_int(palette.fg_dim), name .. " should be secondary, not red")
+	end
+	assert(fg("DiagnosticError") == to_int(palette.red))
 end)
 
 test("defaultLibrary and readonly modifiers resolve to their role", function()
@@ -398,7 +414,8 @@ test("defaultLibrary and readonly modifiers resolve to their role", function()
 	assert(fg("@lsp.typemod.variable.defaultLibrary") == fg("@variable.builtin"))
 	assert(fg("@lsp.typemod.function.defaultLibrary") == fg("@function.builtin"))
 	assert(fg("@lsp.typemod.class.defaultLibrary") == fg("@type.builtin"))
-	assert(fg("@lsp.typemod.variable.readonly") == fg("@constant"))
+	assert(fg("@lsp.typemod.variable.readonly") == fg("@variable"))
+	assert(fg("@lsp.typemod.property.readonly") == fg("@property"))
 end)
 
 test("every Tree-sitter and LSP group is readable once links are resolved", function()
@@ -418,6 +435,105 @@ test("every Tree-sitter and LSP group is readable once links are resolved", func
 	end
 	table.sort(failed)
 	assert(#failed == 0, table.concat(failed, ", "))
+end)
+
+-- Inspect the loaded definitions, including link resolution, rather than
+-- only the palette. Surface thresholds are design regression guards, not WCAG.
+local function loaded(name)
+	local def = vim.api.nvim_get_hl(0, { name = name, link = false })
+	for _, key in ipairs({ "fg", "bg" }) do
+		if def[key] then def[key] = string.format("#%06x", def[key]) end
+	end
+	return def
+end
+
+local function readable(fg, bg, label)
+	local ratio = contrast(fg, bg)
+	assert(ratio >= TEXT_MIN, string.format("%s: %.2f:1 < 4.5:1", label, ratio))
+end
+
+test("Normal, comments and line numbers retain text contrast and a lightness hierarchy", function()
+	reset()
+	vim.cmd("colorscheme dim-solarized")
+	local normal = loaded("Normal")
+	local previous = math.huge
+	for _, name in ipairs({ "Normal", "Comment", "LineNr" }) do
+		local fg = loaded(name).fg
+		readable(fg, normal.bg, name)
+		local L = color.to_lch(fg)
+		assert(previous - L >= 3, name .. " must be quieter than the preceding role")
+		previous = L
+	end
+	assert(loaded("StatusLine").fg ~= loaded("StatusLineNC").fg)
+	assert(loaded("WinBar").fg ~= loaded("WinBarNC").fg)
+	readable(loaded("StatusLineNC").fg, loaded("StatusLineNC").bg, "inactive statusline")
+end)
+
+test("selection surface is separated from Normal and CursorLine without extra chroma", function()
+	reset()
+	vim.cmd("colorscheme dim-solarized")
+	local visual = loaded("Visual")
+	local L, C = color.to_lch(visual.bg)
+	local baseL = color.to_lch(loaded("Normal").bg)
+	assert(L - baseL >= 10, "selection needs at least 10 L* above Normal")
+	assert(C <= 9, "selection must stay low chroma")
+	assert(contrast(visual.bg, loaded("Normal").bg) >= 1.4, "selection / Normal surface")
+	assert(contrast(visual.bg, loaded("CursorLine").bg) >= 1.2, "selection / CursorLine surface")
+	readable(loaded("Normal").fg, visual.bg, "Normal foreground / Visual background")
+end)
+
+test("selected comments, strings and text use a readable explicit foreground", function()
+	reset()
+	vim.cmd("colorscheme dim-solarized")
+	for _, selection in ipairs({ "Visual", "VisualNOS" }) do
+		local visual = loaded(selection)
+		assert(visual.fg, "selection must override syntax foregrounds")
+		-- Definition-level checks; tests/render.lua additionally verifies
+		-- the actual screen output with Tree-sitter and LSP active together.
+		for _, name in ipairs({ "Normal", "Comment", "String", "@comment", "@string" }) do
+			assert(loaded(name).fg, name)
+			readable(visual.fg, visual.bg, selection .. " over " .. name)
+		end
+	end
+end)
+
+test("search, current match, selection and LSP references have different cues", function()
+	reset()
+	vim.cmd("colorscheme dim-solarized")
+	local visual, search, inc = loaded("Visual"), loaded("Search"), loaded("IncSearch")
+	readable(search.fg, search.bg, "Search")
+	readable(inc.fg, inc.bg, "IncSearch")
+	assert(search.bg ~= visual.bg and inc.bg ~= visual.bg and search.bg ~= inc.bg)
+	assert(contrast(search.bg, inc.bg) >= 2, "current search match surface needs a stronger cue")
+	assert(loaded("CurSearch").bg == inc.bg)
+	for _, name in ipairs({ "LspReferenceText", "LspReferenceRead", "LspReferenceWrite" }) do
+		local ref = loaded(name)
+		assert(ref.bg ~= visual.bg and ref.underline, name)
+		for _, syntax in ipairs({ "Normal", "Comment", "String" }) do
+			readable(loaded(syntax).fg, ref.bg, name .. " / " .. syntax)
+		end
+	end
+	assert(loaded("LspReferenceWrite").bold, "write references need a non-color cue")
+end)
+
+test("all diagnostic virtual text severities retain 4.5:1 on their actual backgrounds", function()
+	reset()
+	vim.cmd("colorscheme dim-solarized")
+	for _, severity in ipairs({ "Error", "Warn", "Info", "Hint" }) do
+		local name = "DiagnosticVirtualText" .. severity
+		local def = loaded(name)
+		readable(def.fg, def.bg, name)
+	end
+end)
+
+test("popup text and selected item are readable on distinguishable surfaces", function()
+	reset()
+	vim.cmd("colorscheme dim-solarized")
+	local menu, selected = loaded("Pmenu"), loaded("PmenuSel")
+	readable(menu.fg, menu.bg, "Pmenu")
+	readable(selected.fg, selected.bg, "PmenuSel")
+	assert(contrast(menu.bg, selected.bg) >= 1.5, "popup selection surface")
+	assert(menu.fg ~= selected.fg, "popup selection also changes foreground")
 end)
 
 test("help file generates tags and every reference resolves", function()

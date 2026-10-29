@@ -6,6 +6,40 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-10-30
+
+### Added
+
+- `fg_subtle` palette color for line numbers, sign and fold columns, and inactive
+  window bars.
+- Color-role design notes, editing samples, and regression checks for text
+  contrast, surface separation, and syntax roles.
+- Rendered-color tests for overlapping Lua Tree-sitter and LSP semantic tokens,
+  characterwise, linewise, and blockwise Visual selections, and deselection.
+  CI uses a deterministic LSP fixture; `--real-lsp` enables an optional LuaLS check.
+
+### Changed
+
+- Use neutral text for routine variables, parameters, and properties, reserving
+  blue for callable names. Built-in variables use italics; delimiters and Markdown
+  list markers use secondary text instead of red.
+- Give Visual selections a lighter, low-chroma background and an explicit
+  `fg_bright` foreground so selected comments and syntax remain readable.
+  `VisualNOS` and `QuickFixLine` use the same foreground and background.
+- Use the CursorLine background and underlines for LSP document references;
+  write references also use bold.
+- Lower the supported Neovim version from 0.12.5 to 0.9.5 and expand CI to cover
+  0.9.5, 0.10.4, and 0.11.5 alongside 0.12.5, stable, and nightly.
+- Clarify that text and accents are lighter than original Solarized, document
+  selection and ANSI color tradeoffs, and regenerate the palette chart.
+
+### Fixed
+
+- Generic LSP variable tokens no longer override more specific Tree-sitter
+  captures, preserving function colors when semantic tokens overlap them.
+- LSP `readonly` variables and properties retain their neutral role instead of
+  being colored as constants.
+
 ## [0.1.0] - 2026-10-28
 
 ### Added
@@ -30,5 +64,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `DiagnosticDeprecated`, `DiagnosticUnderlineOk`, `OkMsg`, and the float and popup shadow groups no longer fall back to Neovim's default colors
 - A non-function `on_highlights` value no longer raises an error while loading
 
-[Unreleased]: https://github.com/pitahashi/dim-solarized.nvim/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/pitahashi/dim-solarized.nvim/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/pitahashi/dim-solarized.nvim/releases/tag/v0.1.1
 [0.1.0]: https://github.com/pitahashi/dim-solarized.nvim/releases/tag/v0.1.0
