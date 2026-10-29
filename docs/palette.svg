@@ -1,148 +1,116 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="880" height="700" viewBox="0 0 880 700" font-family="JetBrains Mono, SF Mono, Menlo, Consolas, monospace">
-<clipPath id="win"><rect width="880" height="700" rx="12"/></clipPath>
-<g clip-path="url(#win)">
-<rect x="0" y="0" width="880" height="700" fill="#002b36" />
-<rect x="0" y="0" width="880" height="32" fill="#002630" />
-<rect x="0" y="0" width="168" height="32" fill="#002b36" />
-<rect x="0" y="0" width="168" height="2" fill="#bfa26c" />
-<text x="16" y="21" fill="#e0dac7" font-size="13" xml:space="preserve" ><tspan fill="#bfa26c" >● </tspan><tspan fill="#e0dac7" >palette.lua</tspan></text>
-<text x="184" y="21" fill="#859ca4" font-size="13" xml:space="preserve" >highlights.lua</text>
-<text x="864" y="21" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">dim-solarized.nvim</text>
-<text x="40" y="59" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">1</text>
-<text x="64" y="59" fill="#9daeb0" font-size="13" xml:space="preserve" ><tspan fill="#a5aa6f" >local</tspan><tspan fill="#9daeb0" > palette </tspan><tspan fill="#859ca4" >= {</tspan></text>
-<text x="40" y="81" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">2</text>
-<text x="64" y="81" fill="#9daeb0" font-size="13" xml:space="preserve" ><tspan fill="#859ca4" font-style="italic">  -- Background</tspan></text>
-<text x="40" y="103" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">3</text>
-<text x="64" y="103" fill="#9daeb0" font-size="13" xml:space="preserve" ><tspan fill="#9daeb0" >  bg       </tspan><tspan fill="#859ca4" > = </tspan><tspan fill="#9daeb0" >"#002b36"</tspan><tspan fill="#859ca4" >,</tspan></text>
-<rect x="296" y="92" width="40" height="14" fill="#002b36" rx="3" stroke="#3c6a77"/>
-<text x="40" y="125" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">4</text>
-<text x="64" y="125" fill="#9daeb0" font-size="13" xml:space="preserve" ><tspan fill="#9daeb0" >  bg_alt   </tspan><tspan fill="#859ca4" > = </tspan><tspan fill="#9daeb0" >"#073642"</tspan><tspan fill="#859ca4" >,</tspan></text>
-<rect x="296" y="114" width="40" height="14" fill="#073642" rx="3" stroke="#3c6a77"/>
-<text x="40" y="147" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">5</text>
-<text x="64" y="147" fill="#9daeb0" font-size="13" xml:space="preserve" ><tspan fill="#9daeb0" >  bg_sel   </tspan><tspan fill="#859ca4" > = </tspan><tspan fill="#9daeb0" >"#13414c"</tspan><tspan fill="#859ca4" >,</tspan></text>
-<rect x="296" y="136" width="40" height="14" fill="#13414c" rx="3" stroke="#3c6a77"/>
-<text x="40" y="169" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">6</text>
-<text x="64" y="169" fill="#9daeb0" font-size="13" xml:space="preserve" ><tspan fill="#9daeb0" >  bg_float </tspan><tspan fill="#859ca4" > = </tspan><tspan fill="#9daeb0" >"#002630"</tspan><tspan fill="#859ca4" >,</tspan></text>
-<rect x="296" y="158" width="40" height="14" fill="#002630" rx="3" stroke="#3c6a77"/>
-<text x="40" y="191" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">7</text>
-<text x="64" y="191" fill="#9daeb0" font-size="13" xml:space="preserve" ><tspan fill="#9daeb0" >  border   </tspan><tspan fill="#859ca4" > = </tspan><tspan fill="#3c6a77" >"#3c6a77"</tspan><tspan fill="#859ca4" >,</tspan></text>
-<rect x="296" y="180" width="40" height="14" fill="#3c6a77" rx="3" stroke="#3c6a77"/>
-<text x="40" y="213" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">8</text>
-<text x="64" y="213" fill="#9daeb0" font-size="13" xml:space="preserve" ><tspan fill="#859ca4" font-style="italic">  -- Foreground</tspan></text>
-<text x="40" y="235" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">9</text>
-<text x="64" y="235" fill="#9daeb0" font-size="13" xml:space="preserve" ><tspan fill="#9daeb0" >  fg       </tspan><tspan fill="#859ca4" > = </tspan><tspan fill="#9daeb0" >"#9daeb0"</tspan><tspan fill="#859ca4" >,</tspan></text>
-<rect x="296" y="224" width="40" height="14" fill="#9daeb0" rx="3" stroke="#3c6a77"/>
-<text x="40" y="257" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">10</text>
-<text x="64" y="257" fill="#9daeb0" font-size="13" xml:space="preserve" ><tspan fill="#9daeb0" >  fg_dim   </tspan><tspan fill="#859ca4" > = </tspan><tspan fill="#859ca4" >"#859ca4"</tspan><tspan fill="#859ca4" >,</tspan></text>
-<rect x="296" y="246" width="40" height="14" fill="#859ca4" rx="3" stroke="#3c6a77"/>
-<text x="40" y="279" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">11</text>
-<text x="64" y="279" fill="#9daeb0" font-size="13" xml:space="preserve" ><tspan fill="#9daeb0" >  fg_bright</tspan><tspan fill="#859ca4" > = </tspan><tspan fill="#e0dac7" >"#e0dac7"</tspan><tspan fill="#859ca4" >,</tspan></text>
-<rect x="296" y="268" width="40" height="14" fill="#e0dac7" rx="3" stroke="#3c6a77"/>
-<text x="40" y="301" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">12</text>
-<text x="64" y="301" fill="#9daeb0" font-size="13" xml:space="preserve" ><tspan fill="#9daeb0" >  comment  </tspan><tspan fill="#859ca4" > = </tspan><tspan fill="#859ca4" >"#859ca4"</tspan><tspan fill="#859ca4" >,</tspan></text>
-<rect x="296" y="290" width="40" height="14" fill="#859ca4" rx="3" stroke="#3c6a77"/>
-<text x="40" y="323" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">13</text>
-<text x="64" y="323" fill="#9daeb0" font-size="13" xml:space="preserve" ><tspan fill="#859ca4" font-style="italic">  -- Accent</tspan></text>
-<text x="40" y="345" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">14</text>
-<text x="64" y="345" fill="#9daeb0" font-size="13" xml:space="preserve" ><tspan fill="#9daeb0" >  yellow   </tspan><tspan fill="#859ca4" > = </tspan><tspan fill="#bfa26c" >"#bfa26c"</tspan><tspan fill="#859ca4" >,</tspan></text>
-<rect x="296" y="334" width="40" height="14" fill="#bfa26c" rx="3" stroke="#3c6a77"/>
-<text x="40" y="367" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">15</text>
-<text x="64" y="367" fill="#9daeb0" font-size="13" xml:space="preserve" ><tspan fill="#9daeb0" >  orange   </tspan><tspan fill="#859ca4" > = </tspan><tspan fill="#d8967c" >"#d8967c"</tspan><tspan fill="#859ca4" >,</tspan></text>
-<rect x="296" y="356" width="40" height="14" fill="#d8967c" rx="3" stroke="#3c6a77"/>
-<text x="40" y="389" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">16</text>
-<text x="64" y="389" fill="#9daeb0" font-size="13" xml:space="preserve" ><tspan fill="#9daeb0" >  red      </tspan><tspan fill="#859ca4" > = </tspan><tspan fill="#dd9387" >"#dd9387"</tspan><tspan fill="#859ca4" >,</tspan></text>
-<rect x="296" y="378" width="40" height="14" fill="#dd9387" rx="3" stroke="#3c6a77"/>
-<text x="40" y="411" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">17</text>
-<text x="64" y="411" fill="#9daeb0" font-size="13" xml:space="preserve" ><tspan fill="#9daeb0" >  magenta  </tspan><tspan fill="#859ca4" > = </tspan><tspan fill="#da90ac" >"#da90ac"</tspan><tspan fill="#859ca4" >,</tspan></text>
-<rect x="296" y="400" width="40" height="14" fill="#da90ac" rx="3" stroke="#3c6a77"/>
-<text x="40" y="433" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">18</text>
-<text x="64" y="433" fill="#9daeb0" font-size="13" xml:space="preserve" ><tspan fill="#9daeb0" >  violet   </tspan><tspan fill="#859ca4" > = </tspan><tspan fill="#a2a0da" >"#a2a0da"</tspan><tspan fill="#859ca4" >,</tspan></text>
-<rect x="296" y="422" width="40" height="14" fill="#a2a0da" rx="3" stroke="#3c6a77"/>
-<rect x="0" y="440" width="380" height="22" fill="#073642" />
-<rect x="0" y="440" width="3" height="22" fill="#78aadf" />
-<text x="40" y="455" fill="#e0dac7" font-size="13" xml:space="preserve" text-anchor="end">19</text>
-<text x="64" y="455" fill="#9daeb0" font-size="13" xml:space="preserve" ><tspan fill="#9daeb0" >  blue     </tspan><tspan fill="#859ca4" > = </tspan><tspan fill="#78aadf" >"#78aadf"</tspan><tspan fill="#859ca4" >,</tspan></text>
-<rect x="296" y="444" width="40" height="14" fill="#78aadf" rx="3" stroke="#3c6a77"/>
-<text x="40" y="477" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">20</text>
-<text x="64" y="477" fill="#9daeb0" font-size="13" xml:space="preserve" ><tspan fill="#9daeb0" >  cyan     </tspan><tspan fill="#859ca4" > = </tspan><tspan fill="#50b6ad" >"#50b6ad"</tspan><tspan fill="#859ca4" >,</tspan></text>
-<rect x="296" y="466" width="40" height="14" fill="#50b6ad" rx="3" stroke="#3c6a77"/>
-<text x="40" y="499" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">21</text>
-<text x="64" y="499" fill="#9daeb0" font-size="13" xml:space="preserve" ><tspan fill="#9daeb0" >  green    </tspan><tspan fill="#859ca4" > = </tspan><tspan fill="#a5aa6f" >"#a5aa6f"</tspan><tspan fill="#859ca4" >,</tspan></text>
-<rect x="296" y="488" width="40" height="14" fill="#a5aa6f" rx="3" stroke="#3c6a77"/>
-<text x="40" y="521" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">22</text>
-<text x="64" y="521" fill="#9daeb0" font-size="13" xml:space="preserve" ><tspan fill="#859ca4" font-style="italic">  -- Diff</tspan></text>
-<text x="40" y="543" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">23</text>
-<text x="64" y="543" fill="#9daeb0" font-size="13" xml:space="preserve" ><tspan fill="#9daeb0" >  diff_add </tspan><tspan fill="#859ca4" > = </tspan><tspan fill="#9daeb0" >"#10403c"</tspan><tspan fill="#859ca4" >,</tspan></text>
-<rect x="296" y="532" width="40" height="14" fill="#10403c" rx="3" stroke="#3c6a77"/>
-<text x="40" y="565" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">24</text>
-<text x="64" y="565" fill="#9daeb0" font-size="13" xml:space="preserve" ><tspan fill="#9daeb0" >  diff_change</tspan><tspan fill="#859ca4" > = </tspan><tspan fill="#9daeb0" >"#213950"</tspan><tspan fill="#859ca4" >,</tspan></text>
-<rect x="296" y="554" width="40" height="14" fill="#213950" rx="3" stroke="#3c6a77"/>
-<text x="40" y="587" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">25</text>
-<text x="64" y="587" fill="#9daeb0" font-size="13" xml:space="preserve" ><tspan fill="#9daeb0" >  diff_delete</tspan><tspan fill="#859ca4" > = </tspan><tspan fill="#9daeb0" >"#432f36"</tspan><tspan fill="#859ca4" >,</tspan></text>
-<rect x="296" y="576" width="40" height="14" fill="#432f36" rx="3" stroke="#3c6a77"/>
-<text x="40" y="609" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">26</text>
-<text x="64" y="609" fill="#9daeb0" font-size="13" xml:space="preserve" ><tspan fill="#9daeb0" >  diff_text</tspan><tspan fill="#859ca4" > = </tspan><tspan fill="#9daeb0" >"#36526f"</tspan><tspan fill="#859ca4" >,</tspan></text>
-<rect x="296" y="598" width="40" height="14" fill="#36526f" rx="3" stroke="#3c6a77"/>
-<text x="40" y="631" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">27</text>
-<text x="64" y="631" fill="#9daeb0" font-size="13" xml:space="preserve" ><tspan fill="#859ca4" >}</tspan></text>
-<rect x="400" y="48" width="460" height="208" fill="#002630" rx="8" stroke="#3c6a77" stroke-width="1.5"/>
-<rect x="414" y="46" width="62.8" height="4" fill="#002630" />
-<text x="422" y="52" fill="#e0dac7" font-size="13" xml:space="preserve" font-weight="bold">Accent</text>
-<text x="420" y="79" fill="#bfa26c" font-size="13" xml:space="preserve" >●</text>
-<text x="444" y="79" fill="#9daeb0" font-size="13" xml:space="preserve" >yellow</text>
-<text x="840" y="79" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">#bfa26c</text>
-<text x="420" y="101" fill="#d8967c" font-size="13" xml:space="preserve" >●</text>
-<text x="444" y="101" fill="#9daeb0" font-size="13" xml:space="preserve" >orange</text>
-<text x="840" y="101" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">#d8967c</text>
-<text x="420" y="123" fill="#dd9387" font-size="13" xml:space="preserve" >●</text>
-<text x="444" y="123" fill="#9daeb0" font-size="13" xml:space="preserve" >red</text>
-<text x="840" y="123" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">#dd9387</text>
-<text x="420" y="145" fill="#da90ac" font-size="13" xml:space="preserve" >●</text>
-<text x="444" y="145" fill="#9daeb0" font-size="13" xml:space="preserve" >magenta</text>
-<text x="840" y="145" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">#da90ac</text>
-<text x="420" y="167" fill="#a2a0da" font-size="13" xml:space="preserve" >●</text>
-<text x="444" y="167" fill="#9daeb0" font-size="13" xml:space="preserve" >violet</text>
-<text x="840" y="167" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">#a2a0da</text>
-<rect x="408" y="174" width="444" height="22" fill="#13414c" rx="4"/>
-<text x="420" y="189" fill="#78aadf" font-size="13" xml:space="preserve" >●</text>
-<text x="444" y="189" fill="#9daeb0" font-size="13" xml:space="preserve" >blue</text>
-<text x="840" y="189" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">#78aadf</text>
-<text x="420" y="211" fill="#50b6ad" font-size="13" xml:space="preserve" >●</text>
-<text x="444" y="211" fill="#9daeb0" font-size="13" xml:space="preserve" >cyan</text>
-<text x="840" y="211" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">#50b6ad</text>
-<text x="420" y="233" fill="#a5aa6f" font-size="13" xml:space="preserve" >●</text>
-<text x="444" y="233" fill="#9daeb0" font-size="13" xml:space="preserve" >green</text>
-<text x="840" y="233" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">#a5aa6f</text>
-<rect x="400" y="280" width="460" height="98" fill="#002630" rx="8" stroke="#3c6a77" stroke-width="1.5"/>
-<rect x="414" y="278" width="94" height="4" fill="#002630" />
-<text x="422" y="284" fill="#e0dac7" font-size="13" xml:space="preserve" font-weight="bold">Foreground</text>
-<text x="420" y="311" fill="#e0dac7" font-size="13" xml:space="preserve" >fg_bright The quick brown fox</text>
-<text x="840" y="311" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">#e0dac7</text>
-<text x="420" y="333" fill="#9daeb0" font-size="13" xml:space="preserve" >fg        The quick brown fox</text>
-<text x="840" y="333" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">#9daeb0</text>
-<text x="420" y="355" fill="#859ca4" font-size="13" xml:space="preserve" font-style="italic">comment   The quick brown fox</text>
-<text x="840" y="355" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">#859ca4</text>
-<rect x="400" y="402" width="460" height="120" fill="#002630" rx="8" stroke="#3c6a77" stroke-width="1.5"/>
-<rect x="414" y="400" width="47.2" height="4" fill="#002630" />
-<text x="422" y="406" fill="#e0dac7" font-size="13" xml:space="preserve" font-weight="bold">Diff</text>
-<rect x="408" y="418" width="444" height="22" fill="#10403c" />
-<text x="420" y="433" fill="#9daeb0" font-size="13" xml:space="preserve" >+ local added   = </text>
-<text x="560.4" y="433" fill="#9daeb0" font-size="13" xml:space="preserve" >true</text>
-<rect x="408" y="440" width="444" height="22" fill="#213950" />
-<text x="420" y="455" fill="#9daeb0" font-size="13" xml:space="preserve" >~ local changed = </text>
-<rect x="558.4" y="442" width="19.6" height="18" fill="#36526f" rx="3"/>
-<text x="560.4" y="455" fill="#e0dac7" font-size="13" xml:space="preserve" >42</text>
-<rect x="408" y="462" width="444" height="22" fill="#432f36" />
-<text x="420" y="477" fill="#9daeb0" font-size="13" xml:space="preserve" >- local removed = </text>
-<text x="560.4" y="477" fill="#9daeb0" font-size="13" xml:space="preserve" >nil</text>
-<rect x="408" y="484" width="444" height="22" fill="#073642" />
-<text x="420" y="499" fill="#859ca4" font-size="13" xml:space="preserve" font-style="italic">diff_text highlights changed parts</text>
-<rect x="0" y="650" width="880" height="26" fill="#073642" />
-<rect x="0" y="650" width="92" height="26" fill="#78aadf" />
-<text x="46" y="667" fill="#002b36" font-size="13" xml:space="preserve" text-anchor="middle" font-weight="bold">NORMAL</text>
-<text x="106" y="667" fill="#e0dac7" font-size="13" xml:space="preserve" >palette.lua</text>
-<text x="864" y="667" fill="#859ca4" font-size="13" xml:space="preserve" text-anchor="end">lua  utf-8  ln 19/27</text>
-<text x="16" y="692" fill="#9daeb0" font-size="13" xml:space="preserve" ><tspan fill="#bfa26c" >:</tspan><tspan fill="#9daeb0" >colorscheme </tspan><tspan fill="#50b6ad" >dim-solarized</tspan></text>
-</g>
-<rect x="0.5" y="0.5" width="879" height="699" rx="12" fill="none" stroke="#3c6a77"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="908" height="850" viewBox="0 0 908 850" font-family="JetBrains Mono, SF Mono, Menlo, Consolas, monospace">
+<rect width="908" height="850" rx="12" fill="#002b36"/>
+<text x="28" y="42" fill="#e0dac7" font-size="15" font-weight="bold">Background</text>
+<text x="28" y="60" fill="#8d9aa7" font-size="11" >Surfaces, measured with fg text on top</text>
+<rect x="28" y="76" width="96" height="72" rx="6" fill="#002b36" stroke="#465d65"/>
+<text x="28" y="164" fill="#9daeb0" font-size="12" font-weight="bold">bg</text>
+<text x="28" y="179" fill="#8d9aa7" font-size="11" >#002b36</text>
+<text x="28" y="193" fill="#8d9aa7" font-size="10" >L 15  C 15  h 230</text>
+<text x="28" y="207" fill="#8d9aa7" font-size="10" >6.5:1  AA</text>
+<rect x="136" y="76" width="96" height="72" rx="6" fill="#073642" stroke="#465d65"/>
+<text x="136" y="164" fill="#9daeb0" font-size="12" font-weight="bold">bg_alt</text>
+<text x="136" y="179" fill="#8d9aa7" font-size="11" >#073642</text>
+<text x="136" y="193" fill="#8d9aa7" font-size="10" >L 20  C 16  h 229</text>
+<text x="136" y="207" fill="#8d9aa7" font-size="10" >5.6:1  AA</text>
+<rect x="244" y="76" width="96" height="72" rx="6" fill="#163a45" stroke="#465d65"/>
+<text x="244" y="164" fill="#9daeb0" font-size="12" font-weight="bold">bg_sel</text>
+<text x="244" y="179" fill="#8d9aa7" font-size="11" >#163a45</text>
+<text x="244" y="193" fill="#8d9aa7" font-size="10" >L 22  C 14  h 230</text>
+<text x="244" y="207" fill="#8d9aa7" font-size="10" >5.3:1  AA</text>
+<rect x="352" y="76" width="96" height="72" rx="6" fill="#01242e" stroke="#465d65"/>
+<text x="352" y="164" fill="#9daeb0" font-size="12" font-weight="bold">bg_float</text>
+<text x="352" y="179" fill="#8d9aa7" font-size="11" >#01242e</text>
+<text x="352" y="193" fill="#8d9aa7" font-size="10" >L 12  C 13  h 232</text>
+<text x="352" y="207" fill="#8d9aa7" font-size="10" >7.0:1  AAA</text>
+<rect x="460" y="76" width="96" height="72" rx="6" fill="#465d65" stroke="#465d65"/>
+<text x="460" y="164" fill="#9daeb0" font-size="12" font-weight="bold">border</text>
+<text x="460" y="179" fill="#8d9aa7" font-size="11" >#465d65</text>
+<text x="460" y="193" fill="#8d9aa7" font-size="10" >L 38  C 10  h 229</text>
+<text x="460" y="207" fill="#8d9aa7" font-size="10" >3.0:1  AA large</text>
+<text x="28" y="247" fill="#e0dac7" font-size="15" font-weight="bold">Foreground</text>
+<text x="28" y="265" fill="#8d9aa7" font-size="11" >Text, measured on bg</text>
+<rect x="28" y="281" width="96" height="72" rx="6" fill="#9daeb0" stroke="#465d65"/>
+<text x="28" y="369" fill="#9daeb0" font-size="12" font-weight="bold">fg</text>
+<text x="28" y="384" fill="#8d9aa7" font-size="11" >#9daeb0</text>
+<text x="28" y="398" fill="#8d9aa7" font-size="10" >L 70  C 6  h 209</text>
+<text x="28" y="412" fill="#8d9aa7" font-size="10" >6.5:1  AA</text>
+<rect x="136" y="281" width="96" height="72" rx="6" fill="#8d9aa7" stroke="#465d65"/>
+<text x="136" y="369" fill="#9daeb0" font-size="12" font-weight="bold">fg_dim</text>
+<text x="136" y="384" fill="#8d9aa7" font-size="11" >#8d9aa7</text>
+<text x="136" y="398" fill="#8d9aa7" font-size="10" >L 63  C 9  h 258</text>
+<text x="136" y="412" fill="#8d9aa7" font-size="10" >5.2:1  AA</text>
+<rect x="244" y="281" width="96" height="72" rx="6" fill="#e0dac7" stroke="#465d65"/>
+<text x="244" y="369" fill="#9daeb0" font-size="12" font-weight="bold">fg_bright</text>
+<text x="244" y="384" fill="#8d9aa7" font-size="11" >#e0dac7</text>
+<text x="244" y="398" fill="#8d9aa7" font-size="10" >L 87  C 10  h 97</text>
+<text x="244" y="412" fill="#8d9aa7" font-size="10" >10.7:1  AAA</text>
+<rect x="352" y="281" width="96" height="72" rx="6" fill="#8d9aa7" stroke="#465d65"/>
+<text x="352" y="369" fill="#9daeb0" font-size="12" font-weight="bold">comment</text>
+<text x="352" y="384" fill="#8d9aa7" font-size="11" >#8d9aa7</text>
+<text x="352" y="398" fill="#8d9aa7" font-size="10" >L 63  C 9  h 258</text>
+<text x="352" y="412" fill="#8d9aa7" font-size="10" >5.2:1  AA</text>
+<text x="28" y="452" fill="#e0dac7" font-size="15" font-weight="bold">Accent</text>
+<text x="28" y="470" fill="#8d9aa7" font-size="11" >Shared lightness and chroma, hues from Solarized, measured on bg</text>
+<rect x="28" y="486" width="96" height="72" rx="6" fill="#bb9c60" stroke="#465d65"/>
+<text x="28" y="574" fill="#9daeb0" font-size="12" font-weight="bold">yellow</text>
+<text x="28" y="589" fill="#8d9aa7" font-size="11" >#bb9c60</text>
+<text x="28" y="603" fill="#8d9aa7" font-size="10" >L 66  C 36  h 84</text>
+<text x="28" y="617" fill="#8d9aa7" font-size="10" >5.7:1  AA</text>
+<rect x="136" y="486" width="96" height="72" rx="6" fill="#e99f81" stroke="#465d65"/>
+<text x="136" y="574" fill="#9daeb0" font-size="12" font-weight="bold">orange</text>
+<text x="136" y="589" fill="#8d9aa7" font-size="11" >#e99f81</text>
+<text x="136" y="603" fill="#8d9aa7" font-size="10" >L 72  C 36  h 48</text>
+<text x="136" y="617" fill="#8d9aa7" font-size="10" >7.0:1  AA</text>
+<rect x="244" y="486" width="96" height="72" rx="6" fill="#f87b6b" stroke="#465d65"/>
+<text x="244" y="574" fill="#9daeb0" font-size="12" font-weight="bold">red</text>
+<text x="244" y="589" fill="#8d9aa7" font-size="11" >#f87b6b</text>
+<text x="244" y="603" fill="#8d9aa7" font-size="10" >L 66  C 56  h 34</text>
+<text x="244" y="617" fill="#8d9aa7" font-size="10" >5.7:1  AA</text>
+<rect x="352" y="486" width="96" height="72" rx="6" fill="#e390af" stroke="#465d65"/>
+<text x="352" y="574" fill="#9daeb0" font-size="12" font-weight="bold">magenta</text>
+<text x="352" y="589" fill="#8d9aa7" font-size="11" >#e390af</text>
+<text x="352" y="603" fill="#8d9aa7" font-size="10" >L 69  C 36  h 355</text>
+<text x="352" y="617" fill="#8d9aa7" font-size="10" >6.3:1  AA</text>
+<rect x="460" y="486" width="96" height="72" rx="6" fill="#9b9adb" stroke="#465d65"/>
+<text x="460" y="574" fill="#9daeb0" font-size="12" font-weight="bold">violet</text>
+<text x="460" y="589" fill="#8d9aa7" font-size="11" >#9b9adb</text>
+<text x="460" y="603" fill="#8d9aa7" font-size="10" >L 66  C 36  h 294</text>
+<text x="460" y="617" fill="#8d9aa7" font-size="10" >5.7:1  AA</text>
+<rect x="568" y="486" width="96" height="72" rx="6" fill="#6aa5e0" stroke="#465d65"/>
+<text x="568" y="574" fill="#9daeb0" font-size="12" font-weight="bold">blue</text>
+<text x="568" y="589" fill="#8d9aa7" font-size="11" >#6aa5e0</text>
+<text x="568" y="603" fill="#8d9aa7" font-size="10" >L 66  C 36  h 266</text>
+<text x="568" y="617" fill="#8d9aa7" font-size="10" >5.8:1  AA</text>
+<rect x="676" y="486" width="96" height="72" rx="6" fill="#56afa7" stroke="#465d65"/>
+<text x="676" y="574" fill="#9daeb0" font-size="12" font-weight="bold">cyan</text>
+<text x="676" y="589" fill="#8d9aa7" font-size="11" >#56afa7</text>
+<text x="676" y="603" fill="#8d9aa7" font-size="10" >L 66  C 29  h 188</text>
+<text x="676" y="617" fill="#8d9aa7" font-size="10" >5.8:1  AA</text>
+<rect x="784" y="486" width="96" height="72" rx="6" fill="#9fa563" stroke="#465d65"/>
+<text x="784" y="574" fill="#9daeb0" font-size="12" font-weight="bold">green</text>
+<text x="784" y="589" fill="#8d9aa7" font-size="11" >#9fa563</text>
+<text x="784" y="603" fill="#8d9aa7" font-size="10" >L 66  C 36  h 111</text>
+<text x="784" y="617" fill="#8d9aa7" font-size="10" >5.7:1  AA</text>
+<text x="28" y="657" fill="#e0dac7" font-size="15" font-weight="bold">Diff</text>
+<text x="28" y="675" fill="#8d9aa7" font-size="11" >Backgrounds, measured with fg text on top</text>
+<rect x="28" y="691" width="96" height="72" rx="6" fill="#04413c" stroke="#465d65"/>
+<text x="28" y="779" fill="#9daeb0" font-size="12" font-weight="bold">diff_add</text>
+<text x="28" y="794" fill="#8d9aa7" font-size="11" >#04413c</text>
+<text x="28" y="808" fill="#8d9aa7" font-size="10" >L 24  C 19  h 186</text>
+<text x="28" y="822" fill="#8d9aa7" font-size="10" >5.0:1  AA</text>
+<rect x="136" y="691" width="96" height="72" rx="6" fill="#1d3953" stroke="#465d65"/>
+<text x="136" y="779" fill="#9daeb0" font-size="12" font-weight="bold">diff_change</text>
+<text x="136" y="794" fill="#8d9aa7" font-size="11" >#1d3953</text>
+<text x="136" y="808" fill="#8d9aa7" font-size="10" >L 23  C 19  h 266</text>
+<text x="136" y="822" fill="#8d9aa7" font-size="10" >5.2:1  AA</text>
+<rect x="244" y="691" width="96" height="72" rx="6" fill="#442f36" stroke="#465d65"/>
+<text x="244" y="779" fill="#9daeb0" font-size="12" font-weight="bold">diff_delete</text>
+<text x="244" y="794" fill="#8d9aa7" font-size="11" >#442f36</text>
+<text x="244" y="808" fill="#8d9aa7" font-size="10" >L 22  C 11  h 357</text>
+<text x="244" y="822" fill="#8d9aa7" font-size="10" >5.3:1  AA</text>
+<rect x="352" y="691" width="96" height="72" rx="6" fill="#325273" stroke="#465d65"/>
+<text x="352" y="779" fill="#9daeb0" font-size="12" font-weight="bold">diff_text</text>
+<text x="352" y="794" fill="#8d9aa7" font-size="11" >#325273</text>
+<text x="352" y="808" fill="#8d9aa7" font-size="10" >L 34  C 22  h 267</text>
+<text x="352" y="822" fill="#8d9aa7" font-size="10" >3.5:1  AA large</text>
 </svg>

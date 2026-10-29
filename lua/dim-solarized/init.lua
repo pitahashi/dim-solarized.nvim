@@ -10,7 +10,7 @@ local M = {}
 ---@field on_highlights fun(c: DimSolarizedPalette, groups: table<string, vim.api.keyset.highlight>): table<string, vim.api.keyset.highlight>? Returns highlights to add or override; `groups` contains the built-in definitions
 
 ---@type DimSolarizedOptions
-M.options = {
+M.defaults = {
 	transparent = false,
 	italic_comments = true,
 	on_colors = function() end,
@@ -18,6 +18,9 @@ M.options = {
 		return {}
 	end,
 }
+
+---@type DimSolarizedOptions
+M.options = vim.deepcopy(M.defaults)
 
 --- Apply user options. Call this before `:colorscheme`.
 --- Example: `require("dim-solarized").setup({ transparent = true })`
@@ -59,8 +62,22 @@ function M.load()
 	-- The bright variants reuse the accents so bright red/green/yellow/blue/magenta/cyan stay recognizable;
 	-- bright black is the dim foreground so "dim" output stays readable on the background
 	local ansi = {
-		c.bg_alt, c.red, c.green, c.yellow, c.blue, c.magenta, c.cyan, c.fg,
-		c.fg_dim, c.red, c.green, c.yellow, c.blue, c.magenta, c.cyan, c.fg_bright,
+		c.bg_alt,
+		c.red,
+		c.green,
+		c.yellow,
+		c.blue,
+		c.magenta,
+		c.cyan,
+		c.fg,
+		c.fg_dim,
+		c.red,
+		c.green,
+		c.yellow,
+		c.blue,
+		c.magenta,
+		c.cyan,
+		c.fg_bright,
 	}
 	for i, color in ipairs(ansi) do
 		vim.g["terminal_color_" .. (i - 1)] = color

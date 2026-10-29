@@ -20,30 +20,8 @@ local function test(name, fn)
 	end
 end
 
---- Relative luminance of an sRGB color as defined by WCAG 2.x.
----@param hex string Color formatted as #rrggbb
----@return number
-local function luminance(hex)
-	-- Split "#rrggbb" into three channels scaled to 0-1
-	local r, g, b = hex:match("^#(%x%x)(%x%x)(%x%x)$")
-	local ch = { tonumber(r, 16) / 255, tonumber(g, 16) / 255, tonumber(b, 16) / 255 }
-	for i, v in ipairs(ch) do
-		-- Undo the sRGB transfer function to get linear light
-		ch[i] = v <= 0.04045 and v / 12.92 or ((v + 0.055) / 1.055) ^ 2.4
-	end
-	-- Weight the channels by the eye's sensitivity (Rec. 709 coefficients)
-	return 0.2126 * ch[1] + 0.7152 * ch[2] + 0.0722 * ch[3]
-end
-
---- WCAG contrast ratio between two colors.
----@param a string Color formatted as #rrggbb
----@param b string Color formatted as #rrggbb
----@return number
-local function contrast(a, b)
-	local la, lb = luminance(a), luminance(b)
-	-- The lighter color goes in the numerator; 0.05 is the flare offset from the spec
-	return (math.max(la, lb) + 0.05) / (math.min(la, lb) + 0.05)
-end
+local color = require("dim-solarized.color")
+local contrast = color.contrast
 
 local palette = require("dim-solarized.palette").get()
 local highlights = require("dim-solarized.highlights")
@@ -59,20 +37,13 @@ end
 
 --- Restore the default options so tests do not leak state into each other.
 local function reset()
-	plugin.options = {
-		transparent = false,
-		italic_comments = true,
-		on_colors = function() end,
-		on_highlights = function()
-			return {}
-		end,
-	}
+	plugin.options = vim.deepcopy(plugin.defaults)
 end
 
 -- Groups drawn as separators, guides, or filler. They are meant to be subtle, so they only
 -- need to stay faintly visible (2:1) instead of reaching the text threshold.
 local DECORATIVE = {
-	VertSplit = true, WinSeparator = true, NonText = true, Whitespace = true, SpecialKey = true,
+	WinSeparator = true, NonText = true, Whitespace = true, SpecialKey = true,
 	FloatBorder = true, TelescopeBorder = true, TelescopeResultsBorder = true,
 	TelescopePreviewBorder = true, SnacksIndent = true, PmenuThumb = true, PmenuSbar = true,
 	Conceal = true,
@@ -87,29 +58,36 @@ test("palette values are #rrggbb strings", function()
 	end
 end)
 
-test("background matches Solarized base03/base02", function()
-	assert(palette.bg == "#002b36", palette.bg)
-	assert(palette.bg_alt == "#073642", palette.bg_alt)
+--- Raw 0-255 channels of a #rrggbb color.
+---@param hex string
+---@return integer r, integer g, integer b
+local function channels(hex)
+	return tonumber(hex:sub(2, 3), 16), tonumber(hex:sub(4, 5), 16), tonumber(hex:sub(6, 7), 16)
+end
+
+test("backgrounds are dark teal-blue (red lowest, blue at least green)", function()
+	for _, name in ipairs({ "bg", "bg_alt", "bg_float" }) do
+		local r, g, b = channels(palette[name])
+		assert(b >= g and g > r, name .. ": " .. palette[name])
+	end
 end)
 
-test("every accent has about 6.1:1 contrast against bg", function()
+test("every accent has 5.5-8.0:1 contrast against bg", function()
 	for _, name in ipairs(accents) do
 		local ratio = contrast(palette[name], palette.bg)
-		assert(ratio > 5.9 and ratio < 6.4, string.format("%s: %.2f", name, ratio))
+		assert(ratio > 5.5 and ratio < 8.0, string.format("%s: %.2f", name, ratio))
 	end
 end)
 
 test("accents keep the original Solarized hue order", function()
 	-- The LCh hue angle isn't exposed, so compare the dominant RGB channel instead
-	local function channels(hex)
-		return tonumber(hex:sub(2, 3), 16), tonumber(hex:sub(4, 5), 16), tonumber(hex:sub(6, 7), 16)
-	end
 	local r, _, b = channels(palette.red)
 	assert(r > b, "red should be warm")
 	r, _, b = channels(palette.blue)
 	assert(b > r, "blue should be cool")
-	local _, g, b2 = channels(palette.green)
-	assert(g > b2, "green should have more green than blue")
+	local _, g
+	_, g, b = channels(palette.green)
+	assert(g > b, "green should have more green than blue")
 end)
 
 test("comment and dim foreground have at least 4.5:1 against bg and bg_alt", function()
@@ -137,36 +115,37 @@ test("accents have at least 4.5:1 against selection and diff backgrounds", funct
 	end
 end)
 
-test("every highlight group with fg and bg is readable", function()
+--- Names of built-in groups with an explicit hex fg whose contrast against `bg_of(def)` falls short.
+---@param bg_of fun(def: table): string? Background to check against, or nil to skip the group
+---@return string[]
+local function unreadable(bg_of)
 	reset()
 	local failed = {}
 	for name, def in pairs(highlights.build(palette, plugin.options)) do
-		-- Only definitions that set both colors can be checked on their own
-		if not HIDDEN[name] and def.fg and def.bg and def.fg:sub(1, 1) == "#" and def.bg:sub(1, 1) == "#" then
+		local bg = not HIDDEN[name] and not def.link and def.fg and def.fg:sub(1, 1) == "#" and bg_of(def)
+		if bg and bg:sub(1, 1) == "#" then
 			local min = DECORATIVE[name] and DECORATIVE_MIN or TEXT_MIN
-			local ratio = contrast(def.fg, def.bg)
+			local ratio = contrast(def.fg, bg)
 			if ratio < min - 0.05 then
 				table.insert(failed, string.format("%s %.2f", name, ratio))
 			end
 		end
 	end
 	table.sort(failed)
+	return failed
+end
+
+test("every highlight group with fg and bg is readable", function()
+	local failed = unreadable(function(def)
+		return def.bg
+	end)
 	assert(#failed == 0, table.concat(failed, ", "))
 end)
 
 test("every highlight group with only fg is readable on bg", function()
-	reset()
-	local failed = {}
-	for name, def in pairs(highlights.build(palette, plugin.options)) do
-		if not HIDDEN[name] and def.fg and not def.bg and def.fg:sub(1, 1) == "#" and not def.link then
-			local min = DECORATIVE[name] and DECORATIVE_MIN or TEXT_MIN
-			local ratio = contrast(def.fg, palette.bg)
-			if ratio < min - 0.05 then
-				table.insert(failed, string.format("%s %.2f", name, ratio))
-			end
-		end
-	end
-	table.sort(failed)
+	local failed = unreadable(function(def)
+		return not def.bg and palette.bg or nil
+	end)
 	assert(#failed == 0, table.concat(failed, ", "))
 end)
 

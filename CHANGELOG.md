@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- Dark colorscheme with Solarized's hues at lower lightness and chroma
+- Dark Solarized-based colorscheme with a dim navy background and lower lightness and chroma
 - Palette computed from CIE LCh (`lua/dim-solarized/palette.lua`)
 - Highlight groups for Tree-sitter, LSP, diagnostics, diff, and the 16 `:terminal` colors
 - More Tree-sitter variety: italic parameters, distinct colors for built-in variables, built-in types, attributes, and modules, orange string escapes and regexps, and a different color for each Markdown heading level

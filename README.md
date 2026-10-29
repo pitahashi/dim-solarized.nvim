@@ -1,13 +1,13 @@
 # dim-solarized.nvim
 
-A Neovim colorscheme that keeps Solarized's hues but uses lower lightness and chroma, so it's easier on the eyes. Dark only.
+A Solarized-based Neovim colorscheme with the original Solarized dark background and lower lightness and chroma, so it's easier on the eyes. Dark only.
 
-![dim-solarized palette](docs/palette.svg)
+![dim-solarized palette](docs/dim-solarized.png)
 
 ## :sparkles: Features
 
-- Same hues as Solarized, with a single lightness and chroma shared by all 8 accents (each has about 6.1:1 contrast against the background)
-- Body text and comments are lighter than in the original for readability (comment contrast goes from 2.8:1 to about 5.2:1)
+- A shared chroma for all 8 accents and a shared lightness except red, orange, and magenta, which are slightly lighter to tell them apart (5.7-7.0:1 contrast against the background)
+- Body text and comments are lighter than in the original for readability (comment contrast goes from 2.8:1 to about 5.7:1)
 - The palette is computed from CIE LCh (`lua/dim-solarized/palette.lua`)
 - Covers Tree-sitter, LSP semantic tokens, diagnostics, diff, and the 16 `:terminal` colors
 
@@ -109,6 +109,8 @@ These are the main keys in `c`:
 | `yellow`, `orange`, `red`, `magenta`, `violet`, `blue`, `cyan`, `green` | The 8 accents |
 | `diff_add`, `diff_change`, `diff_delete`, `diff_text` | Diff backgrounds |
 
+![dim-solarized color palette](docs/palette.svg)
+
 The colors are defined in `lua/dim-solarized/palette.lua`.
 
 ## :mag: Troubleshooting
@@ -117,7 +119,7 @@ The colors are defined in `lua/dim-solarized/palette.lua`.
 - Colors from another colorscheme show through: make sure `lazy = false` and `priority = 1000` are set in lazy.nvim.
 - `:colorscheme` always sets `background` to `dark`. There is no light variant.
 
-## :robot: AI Disclosure
+## :robot: about using AI
 
 This project was built with the help of AI (Claude, by Anthropic). The code, documentation, and palette were AI-generated and may contain bugs or unexpected behavior. Please review the code before relying on it, and report any problems by opening an issue.
 

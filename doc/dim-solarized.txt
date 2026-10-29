@@ -17,13 +17,15 @@ CONTENTS                                              *dim-solarized-contents*
 ==============================================================================
 1. INTRODUCTION                                   *dim-solarized-introduction*
 
-dim-solarized.nvim keeps Solarized's hues but uses lower lightness and
-chroma, so the colors are easier on the eyes. It is dark only.
+dim-solarized.nvim is a Solarized-based colorscheme with the original
+Solarized dark background and lower lightness and chroma, so the colors
+are easier on the eyes. It is dark only.
 
-  - All 8 accents share the same lightness and chroma (about 6.1:1 contrast
-    against the background).
+  - All 8 accents share the same chroma and, except red, orange, and magenta
+    (slightly lighter), the same lightness (5.7-7.0:1 contrast against the
+    background).
   - Body text and comments are brighter than in the original (comments reach
-    about 5.2:1 against the background).
+    about 5.7:1 against the background).
   - The palette is computed from CIE LCh in `lua/dim-solarized/palette.lua`.
   - Covers Tree-sitter groups, LSP semantic tokens, diagnostics, diff, and
     the 16 |terminal| colors.
