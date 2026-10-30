@@ -1,21 +1,37 @@
 # Changelog
 
-## Unreleased
-
-- Use Dark+ inspired syntax families with Solarized accents: pale blue identifiers,
-  yellow functions, cyan types, orange strings, green numbers, blue declaration
-  keywords and booleans, and magenta control flow.
-- Add the `variable` palette key for identifiers, parameters, and properties.
-- Preserve specific syntax colors under generic LSP variable/keyword tokens and
-  readonly variable modifiers, including callable names and return statements.
-- Verify role separation and rendered Tree-sitter/LSP overlap with deterministic
-  semantic tokens and the installed Lua Language Server.
-
 All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
+
+## [0.1.2] - 2026-10-30
+
+### Added
+
+- `variable` palette color for pale blue identifiers, parameters, and properties,
+  available for customization through `on_colors`.
+- Regression coverage for syntax color separation and overlapping Tree-sitter/LSP
+  highlights, including generic keyword tokens and readonly callable variables.
+
+### Changed
+
+- Adopt VSCode Dark+ inspired syntax roles using the Solarized palette: pale blue
+  identifiers, yellow functions and methods, cyan types and namespaces, orange
+  strings, green numbers, blue declaration keywords, booleans, and constants,
+  and magenta control flow.
+- Use yellow for string escapes and red for regular expressions.
+- Update the README, help file, design notes, and palette chart to document the
+  new syntax roles and identifier color.
+
+### Fixed
+
+- Generic LSP keyword tokens no longer override more specific syntax colors,
+  preserving magenta control-flow keywords such as `return`.
+- LSP readonly variable modifiers no longer override callable syntax colors,
+  preserving yellow function names. Generic variable and keyword tokens inherit
+  the normal foreground when no underlying syntax capture supplies a color.
 
 ## [0.1.1] - 2026-10-30
 
@@ -75,6 +91,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `DiagnosticDeprecated`, `DiagnosticUnderlineOk`, `OkMsg`, and the float and popup shadow groups no longer fall back to Neovim's default colors
 - A non-function `on_highlights` value no longer raises an error while loading
 
-[Unreleased]: https://github.com/pitahashi/dim-solarized.nvim/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/pitahashi/dim-solarized.nvim/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/pitahashi/dim-solarized.nvim/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/pitahashi/dim-solarized.nvim/releases/tag/v0.1.1
 [0.1.0]: https://github.com/pitahashi/dim-solarized.nvim/releases/tag/v0.1.0
