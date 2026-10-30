@@ -54,6 +54,11 @@
 <text x="460" y="384" fill="#8d9aa7" font-size="11" >#8d9aa7</text>
 <text x="460" y="398" fill="#8d9aa7" font-size="10" >L 63  C 9  h 258</text>
 <text x="460" y="412" fill="#8d9aa7" font-size="10" >5.2:1  AA</text>
+<rect x="568" y="281" width="96" height="72" rx="6" fill="#9dbee7" stroke="#465d65"/>
+<text x="568" y="369" fill="#9daeb0" font-size="12" font-weight="bold">variable</text>
+<text x="568" y="384" fill="#8d9aa7" font-size="11" >#9dbee7</text>
+<text x="568" y="398" fill="#8d9aa7" font-size="10" >L 76  C 24  h 266</text>
+<text x="568" y="412" fill="#8d9aa7" font-size="10" >7.8:1  AAA</text>
 <text x="28" y="452" fill="#e0dac7" font-size="15" font-weight="bold">Accent</text>
 <text x="28" y="470" fill="#8d9aa7" font-size="11" >Shared lightness and chroma, hues from Solarized, measured on bg</text>
 <rect x="28" y="486" width="96" height="72" rx="6" fill="#bb9c60" stroke="#465d65"/>

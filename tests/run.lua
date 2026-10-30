@@ -372,12 +372,12 @@ test("every standard LSP semantic token type is mapped", function()
 	}
 	for _, name in ipairs(types) do
 		local def = vim.api.nvim_get_hl(0, { name = "@lsp.type." .. name, link = false })
-		-- Generic variables explicitly retain the underlying syntax/Tree-sitter color.
-		assert(name == "variable" or def.fg, "@lsp.type." .. name .. " has no color")
+		-- Generic variables/keywords retain the underlying syntax/Tree-sitter color.
+		assert(name == "variable" or name == "keyword" or def.fg, "@lsp.type." .. name .. " has no color")
 	end
 end)
 
-test("routine identifiers are neutral across syntax, Tree-sitter and LSP", function()
+test("Dark+ role families agree across syntax, Tree-sitter and LSP", function()
 	reset()
 	vim.cmd("colorscheme dim-solarized")
 	local function fg(name)
@@ -385,24 +385,51 @@ test("routine identifiers are neutral across syntax, Tree-sitter and LSP", funct
 	end
 	for _, name in ipairs({ "Identifier", "@variable", "@variable.parameter", "@property",
 		"@lsp.type.parameter", "@lsp.type.property" }) do
-		assert(fg(name) == to_int(palette.fg), name)
+		assert(fg(name) == to_int(palette.variable), name)
 	end
 	-- Leave generic semantic variables uncolored so a server cannot erase
 	-- more specific Tree-sitter captures (e.g. callable names).
 	assert(not fg("@lsp.type.variable"))
 	for _, pair in ipairs({
 		{ "@lsp.type.function", "@function" }, { "@lsp.type.method", "@function.method" },
-		{ "@lsp.type.type", "@type" }, { "@lsp.type.keyword", "@keyword" },
+		{ "@lsp.type.type", "@type" }, { "@lsp.type.enumMember", "@constant" },
 		{ "@lsp.type.string", "@string" }, { "@lsp.type.comment", "@comment" },
 	}) do
 		assert(fg(pair[1]) == fg(pair[2]), table.concat(pair, " / "))
 	end
-	assert(fg("Function") == to_int(palette.blue))
+	assert(fg("Function") == to_int(palette.yellow))
 	assert(fg("Function") ~= fg("Identifier"))
 	for _, name in ipairs({ "Delimiter", "@punctuation.delimiter", "@punctuation.bracket", "@markup.list" }) do
 		assert(fg(name) == to_int(palette.fg_dim), name .. " should be secondary, not red")
 	end
 	assert(fg("DiagnosticError") == to_int(palette.red))
+end)
+
+test("primary syntax roles have distinct, perceptually separated colors", function()
+	reset()
+	vim.cmd("colorscheme dim-solarized")
+	local roles = { "@variable", "@function", "@type", "@string", "@number", "@keyword", "@keyword.return" }
+	local function lab(hex)
+		local L, C, h = color.to_lch(hex)
+		return L, C * math.cos(math.rad(h)), C * math.sin(math.rad(h))
+	end
+	for i, name in ipairs(roles) do
+		local fg = vim.api.nvim_get_hl(0, { name = name, link = false }).fg
+		local L, a, b = lab(string.format("#%06x", fg))
+		for j = 1, i - 1 do
+			local other = vim.api.nvim_get_hl(0, { name = roles[j], link = false }).fg
+			local l2, a2, b2 = lab(string.format("#%06x", other))
+			-- CIE76 is a design guard against accidental near-duplicates,
+			-- not a claim about color-vision accessibility.
+			local distance = math.sqrt((L-l2)^2 + (a-a2)^2 + (b-b2)^2)
+			assert(distance >= 15, name .. " too close to " .. roles[j])
+		end
+	end
+	for _, name in ipairs({ "@keyword.conditional", "@keyword.repeat", "@keyword.return", "@keyword.exception", "@keyword.import" }) do
+		assert(vim.api.nvim_get_hl(0, { name = name, link = false }).fg == to_int(palette.magenta), name)
+	end
+	assert(not vim.api.nvim_get_hl(0, { name = "@lsp.type.keyword", link = false }).fg,
+		"generic semantic keywords must preserve control-flow captures")
 end)
 
 test("defaultLibrary and readonly modifiers resolve to their role", function()
@@ -414,7 +441,7 @@ test("defaultLibrary and readonly modifiers resolve to their role", function()
 	assert(fg("@lsp.typemod.variable.defaultLibrary") == fg("@variable.builtin"))
 	assert(fg("@lsp.typemod.function.defaultLibrary") == fg("@function.builtin"))
 	assert(fg("@lsp.typemod.class.defaultLibrary") == fg("@type.builtin"))
-	assert(fg("@lsp.typemod.variable.readonly") == fg("@variable"))
+	assert(not fg("@lsp.typemod.variable.readonly"), "readonly must preserve callable captures")
 	assert(fg("@lsp.typemod.property.readonly") == fg("@property"))
 end)
 

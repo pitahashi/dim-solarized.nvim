@@ -47,7 +47,7 @@ local parser = assert(vim.treesitter.get_parser(0, "lua"))
 parser:parse()
 
 local cases, tokens = {}, {}
-local types = { "variable", "parameter", "property", "function", "comment", "string", "number", "class" }
+local types = { "variable", "parameter", "property", "function", "comment", "string", "number", "class", "keyword" }
 local modifiers = { "readonly", "defaultLibrary", "deprecated" }
 local function add(name, row, needle, color, token_type, mods, styles)
 	local start = assert(lines[row]:find(needle, 1, true))
@@ -71,22 +71,22 @@ local function add(name, row, needle, color, token_type, mods, styles)
 	end
 end
 add("comment", 1, "quiet", "comment", "comment", nil, { italic = true })
-add("readonly variable", 2, "label", "fg", "variable", { "readonly" })
-add("string", 2, "Recent", "cyan", "string")
-add("number", 3, "2", "cyan", "number")
-add("function declaration", 4, "greet", "blue", "function")
-add("parameter", 4, "name", "fg", "parameter")
-add("keyword", 5, "return", "green")
-add("variable", 5, "label", "fg", "variable")
-add("generic variable on callable", 7, "greet", "blue", "variable")
+add("readonly variable", 2, "label", "variable", "variable", { "readonly" })
+add("string", 2, "Recent", "orange", "string")
+add("number", 3, "2", "green", "number")
+add("function declaration", 4, "greet", "yellow", "function")
+add("parameter", 4, "name", "variable", "parameter")
+add("keyword", 5, "return", "magenta", "keyword")
+add("variable", 5, "label", "variable", "variable")
+add("generic variable on callable", 7, "greet", "yellow", "variable", { "readonly" })
 add("delimiter", 7, "(", "fg_dim")
-add("readonly property", 8, "title", "fg", "property", { "readonly" })
-add("ordinary variable", 9, "kind", "fg", "variable")
-add("builtin function", 10, "print", "blue", "function", { "defaultLibrary" })
-add(real_lsp and "ordinary local" or "deprecated variable", 11, "old", "fg", "variable", { "deprecated" })
-add("builtin variable", 12, "self", "fg", "variable", { "defaultLibrary" }, { italic = true })
+add("readonly property", 8, "title", "variable", "property", { "readonly" })
+add("ordinary variable", 9, "kind", "variable", "variable")
+add("builtin function", 10, "print", "yellow", "function", { "defaultLibrary" })
+add(real_lsp and "ordinary local" or "deprecated variable", 11, "old", "variable", "variable", { "deprecated" })
+add("builtin variable", 12, "self", "blue", "variable", { "defaultLibrary" }, { italic = true })
 -- Tree-sitter sees a variable; LSP supplies a more specific type role.
-add("semantic class", 13, "Kind", "fg", "class", nil, real_lsp and {} or { lsp_fg = tonumber(c.yellow:sub(2), 16) })
+add("semantic class", 13, "Kind", "variable", "class", nil, real_lsp and {} or { lsp_fg = tonumber(c.cyan:sub(2), 16) })
 
 table.sort(tokens, function(a, b) return a[1] < b[1] or (a[1] == b[1] and a[2] < b[2]) end)
 local data, prev_row, prev_col = {}, 0, 0

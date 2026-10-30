@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+- Use Dark+ inspired syntax families with Solarized accents: pale blue identifiers,
+  yellow functions, cyan types, orange strings, green numbers, blue declaration
+  keywords and booleans, and magenta control flow.
+- Add the `variable` palette key for identifiers, parameters, and properties.
+- Preserve specific syntax colors under generic LSP variable/keyword tokens and
+  readonly variable modifiers, including callable names and return statements.
+- Verify role separation and rendered Tree-sitter/LSP overlap with deterministic
+  semantic tokens and the installed Lua Language Server.
+
 All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).

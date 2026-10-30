@@ -1,12 +1,16 @@
 # Color roles and verification
 
-The baseline is commit `05fb6e3`. The normal background remains Solarized
-base03 (`#002b36`); all eight accent colors and their hue balance are unchanged.
-The original Solarized accents have L* about 49–60. This palette uses L* about
-66–72 and generally lower chroma, so describing the accents as darker was
-incorrect. For example, blue changes from Solarized `#268bd2` (L* 55.6,
-C* 44.5) to `#6aa5e0` (L* 66.0, C* 35.8). These are sRGB/D65 CIE LCh(ab)
-measurements from the project's color module.
+The syntax mapping follows [VSCode Dark+](https://github.com/microsoft/vscode/blob/main/extensions/theme-defaults/themes/dark_plus.json)
+and its [base theme](https://github.com/microsoft/vscode/blob/main/extensions/theme-defaults/themes/dark_vs.json),
+translated to the existing Solarized accents. The normal background remains
+Solarized base03 (`#002b36`); the eight accent colors retain their hue balance.
+A pale blue `variable` foreground adds a distinct identifier level at L* 76,
+C* 24 with the existing Solarized blue hue. It is lighter and less saturated
+than the blue used for declaration keywords, booleans, and constants.
+
+The following before/after table records the earlier UI readability revision
+from baseline commit `05fb6e3`. Its syntax rows are historical; the current
+syntax roles are described below.
 
 ## Changes and measured pairs
 
@@ -46,19 +50,31 @@ complemented by the actual screen-cell checks described below.
 
 ## Syntax and UI hierarchy
 
-Routine variables, parameters, and properties are normal text. Being neutral
-can make them brighter than an accent, but removes pervasive blue chroma so
-functions retain a meaningful blue role. Types remain yellow, control flow
-green, literals cyan, and comments use their existing muted foreground.
-Delimiters and Markdown list markers use secondary text instead of error red.
-Built-in variables retain an italic cue without a new accent.
+| Role | Palette key |
+| --- | --- |
+| Variables, parameters, properties, tag attributes | `variable` |
+| Functions, methods, macros, decorators | `yellow` |
+| Types, classes, namespaces, constructors | `cyan` |
+| Strings, characters | `orange` |
+| Numbers, floats | `green` |
+| Declaration keywords, booleans, constants, builtin variables | `blue` |
+| Conditionals, loops, return, exceptions, imports | `magenta` |
+| String escapes / regular expressions | `yellow` / `red` |
 
-Tree-sitter, traditional syntax, and LSP role definitions agree. A generic
-semantic variable token is explicitly empty so it cannot erase a more specific
-Tree-sitter capture. Semantic readonly variables/properties stay neutral:
-ordinary `const` locals are not necessarily named constants. Actual constants
-and enum members retain cyan. More specific built-in and deprecated modifiers
-still retain their role/style. Language-specific external overrides can differ.
+Tree-sitter, traditional syntax, and specific LSP roles agree. Generic semantic
+variable and keyword tokens are explicitly empty so they cannot erase more
+specific syntax captures. Without an underlying syntax capture they inherit
+Normal; a theme alone cannot infer a generic token's more specific role.
+Readonly variable modifiers are also empty: ordinary const locals may contain
+functions. Readonly properties retain the property color. Built-in types and
+variables retain italic cues; deprecated modifiers retain strikethrough.
+
+The seven primary families (variable, function, type, string, number, keyword,
+control flow) each have a different color, with a minimum CIE76 distance of 15
+in regression tests. This guards against near-duplicate role colors, not all
+forms of color-vision deficiency. Delimiters retain secondary text, and comments
+retain their muted foreground. Related roles deliberately share a family;
+each token does not get an unrelated accent.
 
 `fg_subtle` adds one auxiliary UI level (L* 59.5), below comments/secondary text
 (L* 63) and body text (L* 70). It is used on the normal surface, not the lighter
@@ -118,7 +134,8 @@ semantic tokens, linewise selection, deselection, characterwise selection, and
 blockwise selection. Positions cover comments, strings, variables, properties,
 parameters, function declarations/calls, keywords, numbers, and delimiters.
 The deterministic server also tests readonly/defaultLibrary/deprecated
-modifiers, a generic semantic variable on a Tree-sitter function call, and a
+modifiers, a readonly generic semantic variable on a Tree-sitter function call, a
+generic keyword over a return capture, and a
 semantic class overriding a less-specific Tree-sitter variable capture.
 Foreground/background RGB values are checked, along with italic and deprecated
 strikethrough cues. All three Visual modes render selected text as `#e0dac7`
