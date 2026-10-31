@@ -31,13 +31,11 @@ reduced; text and accents are lighter than the originals for readability.
   - The palette is computed from CIE LCh in `lua/dim-solarized/palette.lua`.
   - Covers Tree-sitter groups, LSP semantic tokens, diagnostics, diff, and
     the 16 |terminal| colors.
-  - Dark+ role families use Solarized colors: variables/parameters/properties
-    pale blue, functions yellow, types cyan, strings orange, numbers green,
-    declaration keywords/booleans blue, and control flow magenta.
-    Delimiters use secondary text; comments retain their muted foreground.
-  - Generic LSP variable/keyword tokens and readonly variable modifiers leave
-    the underlying syntax color intact, preserving callable/control roles.
-    Without a syntax capture these tokens inherit the normal foreground.
+  - Variables and properties use normal text; functions blue, types yellow,
+    and keywords green. Strings, numbers, booleans, and named constants share
+    cyan. Delimiters use secondary text.
+  - Readonly semantic variables preserve their underlying syntax role,
+    including callable names. The palette is unchanged from v0.1.1.
   - Line numbers use fg_subtle (4.66:1 on bg), below comments (5.23:1) and
     body text (6.52:1). Inactive statuslines retain fg_dim on bg_alt.
   - Visual uses a low-chroma background with a light foreground (7.61:1),
@@ -161,7 +159,6 @@ Keys available in `c`:
   fg, fg_dim, fg_subtle,         Normal, secondary, auxiliary UI,
   fg_bright                       emphasized foreground
   comment, border                Comments, borders
-  variable                       Pale blue identifiers (L* 76, C* 24)
   yellow, orange, red, magenta,
   violet, blue, cyan, green      The 8 accents
   diff_add, diff_change,

@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-10-31
+
+### Changed
+
+- Restore the v0.1.1 palette and Solarized syntax roles: neutral variables,
+  blue functions, yellow types, green keywords, and cyan strings.
+- Keep strings, numbers/floats, named constants/enum members, and booleans
+  in a shared cyan family, with routine identifiers remaining neutral.
+- Keep callable syntax colors under readonly LSP variable modifiers while
+  restoring the Solarized role mapping.
+
+### Removed
+
+- Remove the `variable` palette key introduced in v0.1.2. Use `fg` to customize
+  the shared foreground or `on_highlights` to override identifier groups.
+
+### Added
+
+- Color-distance checks for five primary syntax families and rendered tests
+  for booleans, named constants, floats, and readonly callable names.
+
 ## [0.1.2] - 2026-10-30
 
 ### Added
@@ -91,7 +112,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `DiagnosticDeprecated`, `DiagnosticUnderlineOk`, `OkMsg`, and the float and popup shadow groups no longer fall back to Neovim's default colors
 - A non-function `on_highlights` value no longer raises an error while loading
 
-[Unreleased]: https://github.com/pitahashi/dim-solarized.nvim/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/pitahashi/dim-solarized.nvim/compare/v0.1.3...HEAD
+[0.1.3]: https://github.com/pitahashi/dim-solarized.nvim/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/pitahashi/dim-solarized.nvim/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/pitahashi/dim-solarized.nvim/releases/tag/v0.1.1
 [0.1.0]: https://github.com/pitahashi/dim-solarized.nvim/releases/tag/v0.1.0

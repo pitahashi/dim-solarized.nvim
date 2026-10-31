@@ -1,28 +1,33 @@
 # dim-solarized.nvim
 
-A softer, more muted take on Solarized Dark, with VSCode Dark+ inspired syntax roles.
+A softer, more muted take on Solarized Dark.
 
 ## Palette
 ![dim-solarized color palette](docs/palette.svg)
 
 ## Syntax colors
 
+The v0.1.1 palette is retained. Solarized's blue functions, yellow types,
+green keywords, and a shared cyan family for strings, numbers, constants,
+and booleans anchor the syntax. Routine identifiers stay neutral to keep
+the emphasis on functions, types, and control flow.
+
 | Role | Color |
 | --- | --- |
-| Variables, parameters, properties | Pale blue |
-| Functions, methods | Yellow |
-| Types, classes, namespaces | Cyan |
-| Strings | Orange |
-| Numbers | Green |
-| Declaration keywords, booleans, constants | Blue |
-| Control flow (`if`, `return`, `for`, etc.) | Magenta |
+| Variables, parameters, properties | Normal foreground |
+| Functions, methods | Blue |
+| Types, classes, namespaces | Yellow |
+| Keywords, control flow | Green |
+| Strings, characters | Cyan |
+| Numbers, floats | Cyan |
+| Named constants, enum members | Cyan |
+| Booleans | Cyan |
 | Comments, punctuation | Muted foregrounds |
 
-Tree-sitter and LSP share role colors. Generic semantic variable/keyword tokens
-preserve more specific syntax captures, including callable names and control flow.
-Without a syntax capture, these generic tokens inherit the normal foreground.
-The palette keeps Solarized hues; the role mapping follows
-[VSCode Dark+](https://github.com/microsoft/vscode/blob/main/extensions/theme-defaults/themes/dark_plus.json).
+Related roles share a family: imports, macros, and escapes use orange.
+Tree-sitter and LSP use matching colors. A readonly local retains its syntax
+role, including blue callable names. Generic semantic variables preserve the
+underlying syntax; without a syntax capture they inherit the normal foreground.
 
 ## Requirements
 

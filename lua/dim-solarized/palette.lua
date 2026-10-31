@@ -7,7 +7,6 @@
 ---@field fg_dim string Secondary foreground
 ---@field fg_subtle string Line numbers and auxiliary UI on the normal background
 ---@field fg_bright string Emphasized foreground
----@field variable string Pale blue identifiers, parameters and properties
 ---@field comment string Comments
 ---@field border string Borders
 ---@field yellow string
@@ -90,8 +89,6 @@ M.palettes = {
 		fg_dim = lch(63, BASE_C.muted, BASE_H.muted),
 		fg_subtle = lch(59.5, BASE_C.muted, BASE_H.muted),
 		fg_bright = lch(87, BASE_C.bright, BASE_H.bright),
-		-- A lighter, softer blue separates identifiers from keywords/constants.
-		variable = lch(76, 24, HUES.blue),
 		comment = lch(63, BASE_C.muted, BASE_H.muted),
 		border = lch(38, 10, BASE_H.bg_alt),
 		yellow = lch(accent_l("yellow"), ACCENT_C, HUES.yellow),

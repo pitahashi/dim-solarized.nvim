@@ -1,16 +1,12 @@
 # Color roles and verification
 
-The syntax mapping follows [VSCode Dark+](https://github.com/microsoft/vscode/blob/main/extensions/theme-defaults/themes/dark_plus.json)
-and its [base theme](https://github.com/microsoft/vscode/blob/main/extensions/theme-defaults/themes/dark_vs.json),
-translated to the existing Solarized accents. The normal background remains
-Solarized base03 (`#002b36`); the eight accent colors retain their hue balance.
-A pale blue `variable` foreground adds a distinct identifier level at L* 76,
-C* 24 with the existing Solarized blue hue. It is lighter and less saturated
-than the blue used for declaration keywords, booleans, and constants.
-
-The following before/after table records the earlier UI readability revision
-from baseline commit `05fb6e3`. Its syntax rows are historical; the current
-syntax roles are described below.
+The baseline is commit `05fb6e3`. The normal background remains Solarized
+base03 (`#002b36`); all eight accent colors and their hue balance are unchanged.
+The original Solarized accents have L* about 49–60. This palette uses L* about
+66–72 and generally lower chroma, so describing the accents as darker was
+incorrect. For example, blue changes from Solarized `#268bd2` (L* 55.6,
+C* 44.5) to `#6aa5e0` (L* 66.0, C* 35.8). These are sRGB/D65 CIE LCh(ab)
+measurements from the project's color module.
 
 ## Changes and measured pairs
 
@@ -50,31 +46,31 @@ complemented by the actual screen-cell checks described below.
 
 ## Syntax and UI hierarchy
 
-| Role | Palette key |
-| --- | --- |
-| Variables, parameters, properties, tag attributes | `variable` |
-| Functions, methods, macros, decorators | `yellow` |
-| Types, classes, namespaces, constructors | `cyan` |
-| Strings, characters | `orange` |
-| Numbers, floats | `green` |
-| Declaration keywords, booleans, constants, builtin variables | `blue` |
-| Conditionals, loops, return, exceptions, imports | `magenta` |
-| String escapes / regular expressions | `yellow` / `red` |
+The palette remains byte-for-byte identical to v0.1.1. Routine variables,
+parameters, and properties use normal text. Functions stay blue, types yellow,
+keywords/control flow green, and strings/characters cyan. This keeps the
+Solarized role structure introduced in v0.1.1.
 
-Tree-sitter, traditional syntax, and specific LSP roles agree. Generic semantic
-variable and keyword tokens are explicitly empty so they cannot erase more
-specific syntax captures. Without an underlying syntax capture they inherit
-Normal; a theme alone cannot infer a generic token's more specific role.
-Readonly variable modifiers are also empty: ordinary const locals may contain
-functions. Readonly properties retain the property color. Built-in types and
-variables retain italic cues; deprecated modifiers retain strikethrough.
+Strings/characters, numbers/floats, named constants/enum members, and booleans
+share cyan, preserving Solarized's grouping rather than spending separate
+accents on literals that are already recognizable by their spelling. Routine
+identifiers remain neutral so functions, types, and control flow stand out.
+Imports, macros, and string escapes retain orange as a related special-syntax
+family. Red continues to mark errors. Comments and delimiters retain muted
+foregrounds.
+Built-in variables retain their italic cue. No new palette colors are added.
 
-The seven primary families (variable, function, type, string, number, keyword,
-control flow) each have a different color, with a minimum CIE76 distance of 15
-in regression tests. This guards against near-duplicate role colors, not all
-forms of color-vision deficiency. Delimiters retain secondary text, and comments
-retain their muted foreground. Related roles deliberately share a family;
-each token does not get an unrelated accent.
+Tests compare all five primary role families (neutral variables plus four
+accents). Each pair must have CIE76 distance >= 15 in the project's sRGB/D65
+Lab conversion. This is a guard against near-duplicate colors, not a claim of
+color-vision accessibility. Existing contrast checks cover normal and cursor
+line backgrounds, selections, and syntax-preserving diff surfaces.
+
+Tree-sitter, traditional syntax, and LSP role definitions agree. Generic
+semantic variables and readonly variable modifiers are explicitly empty so
+they cannot erase a more specific Tree-sitter callable capture. A readonly
+property retains its ordinary property role: `const` does not imply a named
+constant. Language-specific external overrides can differ.
 
 `fg_subtle` adds one auxiliary UI level (L* 59.5), below comments/secondary text
 (L* 63) and body text (L* 70). It is used on the normal surface, not the lighter
@@ -129,13 +125,12 @@ Semantic tokens travel through Neovim's normal LSP transport and highlighter;
 the test does not substitute hand-placed semantic extmarks. Child state and
 logs are temporary, and no user Neovim configuration is loaded.
 
-Six scenes each check 16 screen positions: Tree-sitter alone, concurrent LSP
+Six scenes each check 19 screen positions: Tree-sitter alone, concurrent LSP
 semantic tokens, linewise selection, deselection, characterwise selection, and
 blockwise selection. Positions cover comments, strings, variables, properties,
-parameters, function declarations/calls, keywords, numbers, and delimiters.
+parameters, function declarations/calls, keywords, numbers, booleans, named constants, floats, and delimiters.
 The deterministic server also tests readonly/defaultLibrary/deprecated
-modifiers, a readonly generic semantic variable on a Tree-sitter function call, a
-generic keyword over a return capture, and a
+modifiers, a generic semantic variable on a Tree-sitter function call, and a
 semantic class overriding a less-specific Tree-sitter variable capture.
 Foreground/background RGB values are checked, along with italic and deprecated
 strikethrough cues. All three Visual modes render selected text as `#e0dac7`
